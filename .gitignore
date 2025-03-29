@@ -40,13 +40,15 @@ ENV/
 # Dataset files (cached locally but not in repo)
 /datasets/coco128/
 /datasets/coco128_subset/
+/coco128/
 
 # Model weights
 /weights/*.pt
 /weights/*.pth
 
-# Results (optional - may want to include some key results but not all)
-# /results/
+# Large results (keep only key demonstration results)
+/results/coco128/
+/results/coco128_full/
 
 # Logs
 *.log
