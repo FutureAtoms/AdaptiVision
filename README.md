@@ -37,7 +37,7 @@ AdaptiVision is an innovative object detection system that introduces adaptive c
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/abhilashchadhar/AdaptiVision.git
+   git clone https://github.com/future-mind/AdaptiVision.git
    cd AdaptiVision
    ```
 
@@ -153,6 +153,8 @@ AdaptiVision introduces a fundamental innovation in object detection by replacin
 We've conducted extensive testing and analysis of AdaptiVision compared to standard object detection:
 
 - [COCO128 Experiment](results/coco128_experiment/README.md): Comprehensive evaluation on COCO128 dataset with detailed analytics and research paper
+- [Research Paper](results/coco128_experiment/research_paper.md): In-depth analysis of the adaptive thresholding approach
+- [Measurement Verification](results/coco128_experiment/measurement_verification.md): Validation of performance metrics
 
 ### Reproducing the COCO128 Experiment
 
@@ -204,7 +206,7 @@ This approach results in:
 - Improved detection in crowded scenes
 - Enhanced robotics vision with context understanding
 
-For detailed technical information, see our [Research Paper](results/coco128_experiment/research_paper.md).
+For detailed technical information, see our [Innovation Details](results/detailed/innovation.md) and [Research Paper](results/coco128_experiment/research_paper.md).
 
 ## Project Structure
 
@@ -226,11 +228,13 @@ AdaptiVision/
 ├── samples/                # Sample images for testing
 ├── results/                # Output directory for results
 │   └── coco128_experiment/ # COCO128 dataset experiment results
-│       ├── analytics/      # Performance analysis charts and data
+│       ├── analytics/      # Performance analytics and charts
+│       ├── adaptive/       # Results from adaptive detection method
+│       ├── standard/       # Results from standard detection method
 │       ├── comparisons/    # Side-by-side comparison images
-│       ├── standard/       # Standard detection results
-│       ├── adaptive/       # Adaptive detection results
-│       └── README.md       # Experiment documentation
+│       ├── visualizations/ # Visualization of adaptive thresholds
+│       ├── research_paper.md # Detailed research findings
+│       └── measurement_verification.md # Validation of metrics
 ├── docs/                   # Documentation
 ├── tests/                  # Unit tests
 ├── weights/                # Model weights directory (created during setup)
@@ -267,7 +271,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
+- Developed by Abhilash Chadhar
 - Built using PyTorch and OpenCV
 - Based on research in adaptive confidence mechanisms for object detection
-- YOLOv8 base models provided by Ultralytics
-- Developed by Abhilash Chadhar 
+- YOLOv8 base models provided by Ultralytics 

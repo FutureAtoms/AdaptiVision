@@ -13,11 +13,11 @@ setup(
     name="adaptivision",
     version="0.1.0",
     author="Abhilash Chadhar",
-    author_email="abhilash.chadhar@example.com",
+    author_email="contact@future-mind.org",
     description="Adaptive Context-Aware Object Detection System",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/abhilashchadhar/AdaptiVision",
+    url="https://github.com/future-mind/AdaptiVision",
     packages=find_packages(),
     package_data={
         "adaptivision": ["*.py", "*.yaml"],
@@ -66,6 +66,6 @@ Installation is complete! To use AdaptiVision, you need to download model weight
 3. Try it out:
    adaptivision detect --image path/to/image.jpg --weights weights/model_n.pt
 
-For documentation, see: https://github.com/abhilashchadhar/AdaptiVision
+For documentation, see: https://github.com/future-mind/AdaptiVision
 =======================================================
 """) 
