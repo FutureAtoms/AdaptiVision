@@ -3,9 +3,9 @@
 AdaptiVision is an innovative object detection system that introduces adaptive confidence thresholding techniques to significantly improve detection quality across diverse scenes. By dynamically adjusting detection thresholds based on scene complexity and context, AdaptiVision achieves superior performance compared to traditional fixed-threshold approaches.
 
 <p align="center">
-  <img src="results/comparison_final/comparison_bus.jpg" alt="AdaptiVision Demo" width="80%">
+  <img src="results/coco128_experiment/comparisons/comparison_000000000389.jpg" alt="AdaptiVision Demo" width="80%">
   <br>
-  <em>Left: Standard Detection (fixed threshold), Right: AdaptiVision (adaptive threshold)</em>
+  <em>Left: Standard Detection (fixed threshold: 0.25), Right: AdaptiVision (adaptive threshold: 0.18)</em>
 </p>
 
 ## Key Features
