@@ -153,8 +153,8 @@ AdaptiVision introduces a fundamental innovation in object detection by replacin
 We've conducted extensive testing and analysis of AdaptiVision compared to standard object detection:
 
 - [COCO128 Experiment](results/coco128_experiment/README.md): Comprehensive evaluation on COCO128 dataset with detailed analytics and research paper
-- [Research Paper](results/coco128_experiment/research_paper.md): In-depth analysis of the adaptive thresholding approach
-- [Measurement Verification](results/coco128_experiment/measurement_verification.md): Validation of performance metrics
+- [Research Paper](results/coco128_experiment/research_paper.md): Technical analysis of the AdaptiVision approach
+- [Measurement Verification](results/coco128_experiment/measurement_verification.md): Validation of the performance measurements
 
 ### Reproducing the COCO128 Experiment
 
@@ -206,7 +206,7 @@ This approach results in:
 - Improved detection in crowded scenes
 - Enhanced robotics vision with context understanding
 
-For detailed technical information, see our [Innovation Details](results/detailed/innovation.md) and [Research Paper](results/coco128_experiment/research_paper.md).
+For detailed technical information, see our [Research Paper](results/coco128_experiment/research_paper.md).
 
 ## Project Structure
 
@@ -228,13 +228,17 @@ AdaptiVision/
 ├── samples/                # Sample images for testing
 ├── results/                # Output directory for results
 │   └── coco128_experiment/ # COCO128 dataset experiment results
-│       ├── analytics/      # Performance analytics and charts
-│       ├── adaptive/       # Results from adaptive detection method
-│       ├── standard/       # Results from standard detection method
-│       ├── comparisons/    # Side-by-side comparison images
-│       ├── visualizations/ # Visualization of adaptive thresholds
-│       ├── research_paper.md # Detailed research findings
-│       └── measurement_verification.md # Validation of metrics
+│       ├── adaptive/       # Results from adaptive detection
+│       ├── analytics/      # Charts and performance analysis
+│       ├── comparisons/    # Side-by-side comparisons of methods
+│       ├── standard/       # Results from standard detection
+│       ├── visualizations/ # Visualizations of complexity and thresholds
+│       ├── README.md       # Experiment overview
+│       ├── research_paper.md # Technical research paper
+│       ├── experiment_report.md # Summary of experiment results
+│       ├── measurement_verification.md # Verification of measurements
+│       ├── detailed_results.json # Detailed results for all images
+│       └── summary_results.csv   # Summary statistics
 ├── docs/                   # Documentation
 ├── tests/                  # Unit tests
 ├── weights/                # Model weights directory (created during setup)
@@ -271,7 +275,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Developed by Abhilash Chadhar
 - Built using PyTorch and OpenCV
 - Based on research in adaptive confidence mechanisms for object detection
-- YOLOv8 base models provided by Ultralytics 
+- YOLOv8 base models provided by Ultralytics
+- Developed by Abhilash Chadhar 
