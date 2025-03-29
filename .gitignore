@@ -46,9 +46,9 @@ ENV/
 /weights/*.pt
 /weights/*.pth
 
-# Large results (keep only key demonstration results)
-/results/coco128/
-/results/coco128_full/
+# Results (keep only coco128_experiment)
+/results/*
+!/results/coco128_experiment/
 
 # Logs
 *.log
