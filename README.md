@@ -37,7 +37,7 @@ AdaptiVision is an innovative object detection system that introduces adaptive c
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/future-mind/AdaptiVision.git
+   git clone https://github.com/abhilashchadhar/AdaptiVision.git
    cd AdaptiVision
    ```
 
@@ -152,8 +152,6 @@ AdaptiVision introduces a fundamental innovation in object detection by replacin
 
 We've conducted extensive testing and analysis of AdaptiVision compared to standard object detection:
 
-- [Performance Analytics](results/detailed/analytics.md): Comprehensive performance statistics across diverse images
-- [Innovation Details](results/detailed/innovation.md): Technical breakdown of AdaptiVision's key innovations
 - [COCO128 Experiment](results/coco128_experiment/README.md): Comprehensive evaluation on COCO128 dataset with detailed analytics and research paper
 
 ### Reproducing the COCO128 Experiment
@@ -206,7 +204,7 @@ This approach results in:
 - Improved detection in crowded scenes
 - Enhanced robotics vision with context understanding
 
-For detailed technical information, see our [Innovation Details](results/detailed/innovation.md) and [Research Paper](results/coco128_experiment/research_paper.md).
+For detailed technical information, see our [Research Paper](results/coco128_experiment/research_paper.md).
 
 ## Project Structure
 
@@ -227,8 +225,12 @@ AdaptiVision/
 │   └── batch_processing.py # Process multiple images
 ├── samples/                # Sample images for testing
 ├── results/                # Output directory for results
-│   ├── detailed/           # Detailed analysis and results
 │   └── coco128_experiment/ # COCO128 dataset experiment results
+│       ├── analytics/      # Performance analysis charts and data
+│       ├── comparisons/    # Side-by-side comparison images
+│       ├── standard/       # Standard detection results
+│       ├── adaptive/       # Adaptive detection results
+│       └── README.md       # Experiment documentation
 ├── docs/                   # Documentation
 ├── tests/                  # Unit tests
 ├── weights/                # Model weights directory (created during setup)
@@ -267,4 +269,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built using PyTorch and OpenCV
 - Based on research in adaptive confidence mechanisms for object detection
-- YOLOv8 base models provided by Ultralytics 
+- YOLOv8 base models provided by Ultralytics
+- Developed by Abhilash Chadhar 
