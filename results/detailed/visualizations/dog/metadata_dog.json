@@ -1,0 +1,60 @@
+{
+  "image_path": "samples/coco/dog.jpg",
+  "complexity": 0.8331085515101648,
+  "base_threshold": 0.25,
+  "adaptive_threshold": 0.133378289697967,
+  "detections": [
+    {
+      "bbox": [
+        131.10955810546875,
+        219.89035034179688,
+        309.2548828125,
+        541.836181640625
+      ],
+      "confidence": 0.9080022573471069,
+      "class_id": 16,
+      "class_name": "dog",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        130.63320922851562,
+        139.613525390625,
+        568.271728515625,
+        420.8494873046875
+      ],
+      "confidence": 0.9087633490562439,
+      "class_id": 1,
+      "class_name": "bicycle",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        467.49267578125,
+        74.8090591430664,
+        692.089599609375,
+        171.66697692871094
+      ],
+      "confidence": 0.6205863952636719,
+      "class_id": 2,
+      "class_name": "car",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        467.15869140625,
+        74.54901885986328,
+        692.6063842773438,
+        171.7832489013672
+      ],
+      "confidence": 0.5086151361465454,
+      "class_id": 7,
+      "class_name": "truck",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    }
+  ]
+}

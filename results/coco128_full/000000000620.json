@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        92.59912872314453,
+        252.8455810546875,
+        317.10400390625,
+        372.2376708984375
+      ]
+    ],
+    "scores": [
+      0.7126693725585938
+    ],
+    "labels": [
+      53
+    ],
+    "class_names": [
+      "pizza"
+    ],
+    "image_path": "coco128/images/train2017/000000000620.jpg",
+    "image_shape": [
+      640,
+      480,
+      3
+    ],
+    "inference_time": 0.08835268020629883,
+    "scene_complexity": 0.7249179195427523,
+    "adaptive_threshold": 0.28587984559244034,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

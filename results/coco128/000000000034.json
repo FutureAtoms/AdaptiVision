@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        0.0,
+        16.796417236328125,
+        443.5450134277344,
+        399.9919738769531
+      ]
+    ],
+    "scores": [
+      0.9339749217033386
+    ],
+    "labels": [
+      22
+    ],
+    "class_names": [
+      "zebra"
+    ],
+    "image_path": "coco128/subset/000000000034.jpg",
+    "image_shape": [
+      425,
+      640,
+      3
+    ],
+    "inference_time": 0.7634520530700684,
+    "scene_complexity": 0.35,
+    "adaptive_threshold": 0.28804687500000004,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

@@ -1,0 +1,177 @@
+{
+  "image_path": "coco128/subset/000000000049.jpg",
+  "complexity": 0.8407270908355713,
+  "base_threshold": 0.25,
+  "adaptive_threshold": 0.1318545788526535,
+  "detections": [
+    {
+      "bbox": [
+        166.6862030029297,
+        228.5746612548828,
+        291.5018005371094,
+        410.8452453613281
+      ],
+      "confidence": 0.8495419025421143,
+      "class_id": 17,
+      "class_name": "horse",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        200.38336181640625,
+        426.7265930175781,
+        272.1360168457031,
+        474.57958984375
+      ],
+      "confidence": 0.7653250098228455,
+      "class_id": 58,
+      "class_name": "potted plant",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        79.46551513671875,
+        243.65635681152344,
+        185.47866821289062,
+        403.3479919433594
+      ],
+      "confidence": 0.5774568915367126,
+      "class_id": 17,
+      "class_name": "horse",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        280.56884765625,
+        328.53656005859375,
+        295.630126953125,
+        360.37030029296875
+      ],
+      "confidence": 0.5726513862609863,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        189.0376434326172,
+        332.1307678222656,
+        198.79519653320312,
+        358.6882629394531
+      ],
+      "confidence": 0.5077670812606812,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        118.50992584228516,
+        338.67718505859375,
+        130.9620819091797,
+        368.08905029296875
+      ],
+      "confidence": 0.44329309463500977,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        357.6742858886719,
+        339.0513916015625,
+        376.939208984375,
+        361.40374755859375
+      ],
+      "confidence": 0.35919633507728577,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        80.22583770751953,
+        242.1558837890625,
+        171.99234008789062,
+        328.1037902832031
+      ],
+      "confidence": 0.33550921082496643,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        351.77032470703125,
+        336.33563232421875,
+        360.1092529296875,
+        362.0425720214844
+      ],
+      "confidence": 0.31475600600242615,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        209.43031311035156,
+        267.1842041015625,
+        268.07470703125,
+        336.42425537109375
+      ],
+      "confidence": 0.2655177414417267,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        5.3076090812683105,
+        315.9147033691406,
+        18.000770568847656,
+        366.9846496582031
+      ],
+      "confidence": 0.22623789310455322,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 0,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        193.0868682861328,
+        333.9915466308594,
+        202.9332733154297,
+        357.5043029785156
+      ],
+      "confidence": 0.18187305331230164,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 0,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        180.58087158203125,
+        227.2587127685547,
+        240.37423706054688,
+        337.2422180175781
+      ],
+      "confidence": 0.11832115054130554,
+      "class_id": 17,
+      "class_name": "horse",
+      "passes_standard": 0,
+      "passes_adaptive": 0
+    }
+  ]
+}

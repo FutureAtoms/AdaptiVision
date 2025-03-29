@@ -1,0 +1,15 @@
+[
+  {
+    "boxes": [],
+    "scores": [],
+    "labels": [],
+    "class_names": [],
+    "image_path": "coco128/images/train2017/000000000514.jpg",
+    "image_shape": [
+      640,
+      360,
+      3
+    ],
+    "inference_time": 0.05740976333618164
+  }
+]

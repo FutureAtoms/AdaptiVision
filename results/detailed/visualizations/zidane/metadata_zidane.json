@@ -1,0 +1,60 @@
+{
+  "image_path": "samples/zidane.jpg",
+  "complexity": 0.8494850021680094,
+  "base_threshold": 0.25,
+  "adaptive_threshold": 0.1301029995663981,
+  "detections": [
+    {
+      "bbox": [
+        114.87008666992188,
+        197.41204833984375,
+        1114.46875,
+        711.889404296875
+      ],
+      "confidence": 0.9216818809509277,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        748.46142578125,
+        41.8551025390625,
+        1143.0755615234375,
+        713.02392578125
+      ],
+      "confidence": 0.9046699404716492,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        439.47467041015625,
+        437.0735168457031,
+        524.3458862304688,
+        709.15966796875
+      ],
+      "confidence": 0.3809719681739807,
+      "class_id": 27,
+      "class_name": "tie",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        1042.66943359375,
+        443.1205139160156,
+        1142.158203125,
+        708.3487548828125
+      ],
+      "confidence": 0.10693709552288055,
+      "class_id": 38,
+      "class_name": "tennis racket",
+      "passes_standard": 0,
+      "passes_adaptive": 0
+    }
+  ]
+}

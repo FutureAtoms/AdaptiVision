@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        115.07994079589844,
+        108.56698608398438,
+        576.796630859375,
+        323.2859802246094
+      ]
+    ],
+    "scores": [
+      0.9449127912521362
+    ],
+    "labels": [
+      5
+    ],
+    "class_names": [
+      "bus"
+    ],
+    "image_path": "coco128/images/train2017/000000000471.jpg",
+    "image_shape": [
+      427,
+      640,
+      3
+    ],
+    "inference_time": 0.07282781600952148,
+    "scene_complexity": 0.35,
+    "adaptive_threshold": 0.28804687500000004,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

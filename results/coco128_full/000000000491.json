@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        106.6560287475586,
+        3.204464912414551,
+        415.80035400390625,
+        310.3575439453125
+      ]
+    ],
+    "scores": [
+      0.6916923522949219
+    ],
+    "labels": [
+      77
+    ],
+    "class_names": [
+      "teddy bear"
+    ],
+    "image_path": "coco128/images/train2017/000000000491.jpg",
+    "image_shape": [
+      313,
+      500,
+      3
+    ],
+    "inference_time": 0.07922983169555664,
+    "scene_complexity": 0.6128474617959475,
+    "adaptive_threshold": 0.18152459924377257,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

@@ -1,0 +1,86 @@
+{
+  "image_path": "samples/bus.jpg",
+  "complexity": 0.9225490200071284,
+  "base_threshold": 0.25,
+  "adaptive_threshold": 0.1154901959985743,
+  "detections": [
+    {
+      "bbox": [
+        22.87126922607422,
+        231.27731323242188,
+        805.0025634765625,
+        756.8404541015625
+      ],
+      "confidence": 0.8734481334686279,
+      "class_id": 5,
+      "class_name": "bus",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        48.550384521484375,
+        398.55230712890625,
+        245.34556579589844,
+        902.7026977539062
+      ],
+      "confidence": 0.8656911849975586,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        669.472900390625,
+        392.1859436035156,
+        809.7201538085938,
+        877.0354614257812
+      ],
+      "confidence": 0.8528352975845337,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        221.5172882080078,
+        405.79864501953125,
+        344.9706115722656,
+        857.53662109375
+      ],
+      "confidence": 0.8252243995666504,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        0.0,
+        550.5250244140625,
+        63.006935119628906,
+        873.4429321289062
+      ],
+      "confidence": 0.2611122131347656,
+      "class_id": 0,
+      "class_name": "person",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    },
+    {
+      "bbox": [
+        0.058167457580566406,
+        254.45938110351562,
+        32.55740737915039,
+        324.8741760253906
+      ],
+      "confidence": 0.28506913781166077,
+      "class_id": 11,
+      "class_name": "stop sign",
+      "passes_standard": 1,
+      "passes_adaptive": 1
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        75.13387298583984,
+        295.1343688964844,
+        164.44747924804688,
+        318.47552490234375
+      ]
+    ],
+    "scores": [
+      0.8118667602539062
+    ],
+    "labels": [
+      71
+    ],
+    "class_names": [
+      "sink"
+    ],
+    "image_path": "coco128/images/train2017/000000000590.jpg",
+    "image_shape": [
+      500,
+      409,
+      3
+    ],
+    "inference_time": 0.08672714233398438,
+    "scene_complexity": 0.3529382197001205,
+    "adaptive_threshold": 0.28726182403918343,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

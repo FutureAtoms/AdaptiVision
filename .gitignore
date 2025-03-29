@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Dataset files (cached locally but not in repo)
+/datasets/coco128/
+/datasets/coco128_subset/
+
+# Model weights
+/weights/*.pt
+/weights/*.pth
+
+# Results (optional - may want to include some key results but not all)
+# /results/
+
+# Logs
+*.log
+*.out
+log.txt
+
+# Testing
+.coverage
+htmlcov/ 

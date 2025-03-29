@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        28.5758056640625,
+        122.1827392578125,
+        586.669677734375,
+        637.06005859375
+      ]
+    ],
+    "scores": [
+      0.7520609498023987
+    ],
+    "labels": [
+      20
+    ],
+    "class_names": [
+      "elephant"
+    ],
+    "image_path": "coco128/images/train2017/000000000263.jpg",
+    "image_shape": [
+      640,
+      591,
+      3
+    ],
+    "inference_time": 0.11980795860290527,
+    "scene_complexity": 0.44039811254441136,
+    "adaptive_threshold": 0.25969359764360744,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

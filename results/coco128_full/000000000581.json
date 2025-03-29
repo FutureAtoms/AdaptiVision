@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        0.0,
+        133.8642120361328,
+        270.4007568359375,
+        469.95989990234375
+      ]
+    ],
+    "scores": [
+      0.5544394254684448
+    ],
+    "labels": [
+      16
+    ],
+    "class_names": [
+      "dog"
+    ],
+    "image_path": "coco128/images/train2017/000000000581.jpg",
+    "image_shape": [
+      500,
+      473,
+      3
+    ],
+    "inference_time": 0.09614014625549316,
+    "scene_complexity": 0.6247400020241617,
+    "adaptive_threshold": 0.1749692129589565,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

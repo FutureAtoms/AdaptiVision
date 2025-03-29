@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        222.76513671875,
+        83.69290161132812,
+        502.279296875,
+        344.8473815917969
+      ]
+    ],
+    "scores": [
+      0.909079372882843
+    ],
+    "labels": [
+      21
+    ],
+    "class_names": [
+      "bear"
+    ],
+    "image_path": "coco128/images/train2017/000000000502.jpg",
+    "image_shape": [
+      427,
+      640,
+      3
+    ],
+    "inference_time": 0.06669092178344727,
+    "scene_complexity": 0.3003340125083923,
+    "adaptive_threshold": 0.29992896307340267,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

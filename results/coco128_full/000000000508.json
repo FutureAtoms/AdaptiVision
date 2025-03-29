@@ -1,0 +1,19 @@
+[
+  {
+    "boxes": [],
+    "scores": [],
+    "labels": [],
+    "class_names": [],
+    "image_path": "coco128/images/train2017/000000000508.jpg",
+    "image_shape": [
+      480,
+      640,
+      3
+    ],
+    "inference_time": 0.07108306884765625,
+    "scene_complexity": 0.10091510807396845,
+    "adaptive_threshold": 0.28318081532100525,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

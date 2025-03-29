@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        46.803466796875,
+        65.07952880859375,
+        425.32904052734375,
+        640.0
+      ]
+    ],
+    "scores": [
+      0.7316802740097046
+    ],
+    "labels": [
+      23
+    ],
+    "class_names": [
+      "giraffe"
+    ],
+    "image_path": "coco128/images/train2017/000000000072.jpg",
+    "image_shape": [
+      640,
+      427,
+      3
+    ],
+    "inference_time": 0.07651996612548828,
+    "scene_complexity": 0.35,
+    "adaptive_threshold": 0.28804687500000004,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

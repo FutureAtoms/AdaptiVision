@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        322.64752197265625,
+        248.57537841796875,
+        563.7666625976562,
+        409.80322265625
+      ]
+    ],
+    "scores": [
+      0.9349843859672546
+    ],
+    "labels": [
+      3
+    ],
+    "class_names": [
+      "motorcycle"
+    ],
+    "image_path": "coco128/images/train2017/000000000629.jpg",
+    "image_shape": [
+      427,
+      640,
+      3
+    ],
+    "inference_time": 0.07910513877868652,
+    "scene_complexity": 0.20669036209583283,
+    "adaptive_threshold": 0.2655516063173612,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

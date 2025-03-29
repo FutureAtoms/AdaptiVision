@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        368.6224365234375,
+        301.57958984375,
+        508.3387451171875,
+        400.7249755859375
+      ]
+    ],
+    "scores": [
+      0.46194973587989807
+    ],
+    "labels": [
+      62
+    ],
+    "class_names": [
+      "tv"
+    ],
+    "image_path": "coco128/images/train2017/000000000595.jpg",
+    "image_shape": [
+      480,
+      640,
+      3
+    ],
+    "inference_time": 0.07525420188903809,
+    "scene_complexity": 0.13381891548633576,
+    "adaptive_threshold": 0.277696847418944,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

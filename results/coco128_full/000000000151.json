@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        212.49134826660156,
+        326.34173583984375,
+        249.09962463378906,
+        363.58245849609375
+      ]
+    ],
+    "scores": [
+      0.9449172019958496
+    ],
+    "labels": [
+      11
+    ],
+    "class_names": [
+      "stop sign"
+    ],
+    "image_path": "coco128/images/train2017/000000000151.jpg",
+    "image_shape": [
+      640,
+      480,
+      3
+    ],
+    "inference_time": 0.07092022895812988,
+    "scene_complexity": 0.6186169356107711,
+    "adaptive_threshold": 0.17836312686439956,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]

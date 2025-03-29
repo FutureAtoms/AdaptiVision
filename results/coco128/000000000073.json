@@ -1,0 +1,32 @@
+[
+  {
+    "boxes": [
+      [
+        5.929931640625,
+        26.740478515625,
+        521.2368774414062,
+        634.121337890625
+      ]
+    ],
+    "scores": [
+      0.861980140209198
+    ],
+    "labels": [
+      3
+    ],
+    "class_names": [
+      "motorcycle"
+    ],
+    "image_path": "coco128/subset/000000000073.jpg",
+    "image_shape": [
+      640,
+      565,
+      3
+    ],
+    "inference_time": 0.09456706047058105,
+    "scene_complexity": 0.6488276522421466,
+    "adaptive_threshold": 0.1612312355713859,
+    "enable_adaptive": true,
+    "context_aware": true
+  }
+]
