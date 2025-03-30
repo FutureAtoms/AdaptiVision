@@ -120,6 +120,12 @@ detector.visualize("path/to/image.jpg", results[0], "output/result.jpg")
 
 AdaptiVision introduces a fundamental innovation in object detection by replacing the traditional fixed confidence threshold approach with an adaptive system that dynamically adjusts thresholds based on scene characteristics.
 
+<p align="center">
+  <img src="docs/architecture/adaptivision_architecture.svg" alt="AdaptiVision Architecture" width="90%">
+  <br>
+  <em>AdaptiVision System Architecture: Adaptive Confidence Thresholding Pipeline</em>
+</p>
+
 ### How It Works
 
 1. **Scene Complexity Analysis**:
@@ -153,6 +159,7 @@ AdaptiVision introduces a fundamental innovation in object detection by replacin
 We've conducted extensive testing and analysis of AdaptiVision compared to standard object detection:
 
 - [COCO128 Experiment](results/coco128_experiment/README.md): Comprehensive evaluation on COCO128 dataset with detailed analytics and research paper
+- [Full COCO Research Paper](results/full_coco_research/research_paper.md): In-depth technical analysis with full COCO dataset results
 - [Research Paper](results/coco128_experiment/research_paper.md): Technical analysis of the AdaptiVision approach
 - [Measurement Verification](results/coco128_experiment/measurement_verification.md): Validation of the performance measurements
 
@@ -206,7 +213,7 @@ This approach results in:
 - Improved detection in crowded scenes
 - Enhanced robotics vision with context understanding
 
-For detailed technical information, see our [Research Paper](results/coco128_experiment/research_paper.md).
+For detailed technical information, see our [Research Paper](results/coco128_experiment/research_paper.md) and [Full COCO Research Paper](results/full_coco_research/research_paper.md).
 
 ## Project Structure
 
@@ -227,19 +234,23 @@ AdaptiVision/
 │   └── batch_processing.py # Process multiple images
 ├── samples/                # Sample images for testing
 ├── results/                # Output directory for results
-│   └── coco128_experiment/ # COCO128 dataset experiment results
-│       ├── adaptive/       # Results from adaptive detection
-│       ├── analytics/      # Charts and performance analysis
-│       ├── comparisons/    # Side-by-side comparisons of methods
-│       ├── standard/       # Results from standard detection
-│       ├── visualizations/ # Visualizations of complexity and thresholds
-│       ├── README.md       # Experiment overview
-│       ├── research_paper.md # Technical research paper
-│       ├── experiment_report.md # Summary of experiment results
-│       ├── measurement_verification.md # Verification of measurements
-│       ├── detailed_results.json # Detailed results for all images
-│       └── summary_results.csv   # Summary statistics
+│   ├── coco128_experiment/ # COCO128 dataset experiment results
+│   │   ├── adaptive/       # Results from adaptive detection
+│   │   ├── analytics/      # Charts and performance analysis
+│   │   ├── comparisons/    # Side-by-side comparisons of methods
+│   │   ├── standard/       # Results from standard detection
+│   │   ├── visualizations/ # Visualizations of complexity and thresholds
+│   │   ├── README.md       # Experiment overview
+│   │   ├── research_paper.md # Technical research paper
+│   │   ├── experiment_report.md # Summary of experiment results
+│   │   ├── measurement_verification.md # Verification of measurements
+│   │   ├── detailed_results.json # Detailed results for all images
+│   │   └── summary_results.csv   # Summary statistics
+│   └── full_coco_research/ # Full COCO dataset research results
+│       ├── research_paper.md # Comprehensive research paper
+│       └── adaptivision_architecture.svg # System architecture diagram
 ├── docs/                   # Documentation
+│   └── architecture/       # Architecture diagrams
 ├── tests/                  # Unit tests
 ├── weights/                # Model weights directory (created during setup)
 ├── datasets/               # Dataset directory (created during experiments)
