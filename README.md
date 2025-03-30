@@ -1,21 +1,103 @@
 # AdaptiVision: Adaptive Context-Aware Object Detection
 
-AdaptiVision is an innovative object detection system that introduces adaptive confidence thresholding techniques to significantly improve detection quality across diverse scenes. By dynamically adjusting detection thresholds based on scene complexity and context, AdaptiVision achieves superior performance compared to traditional fixed-threshold approaches.
+AdaptiVision is an innovative object detection system that dynamically adjusts confidence thresholds based on scene complexity and context awareness, resulting in faster and more accurate object detection compared to traditional fixed-threshold approaches.
 
-<p align="center">
-  <img src="results/coco128_experiment/comparisons/comparison_000000000389.jpg" alt="AdaptiVision Demo" width="80%">
-  <br>
-  <em>Left: Standard Detection (fixed threshold: 0.25), Right: AdaptiVision (adaptive threshold: 0.18)</em>
-</p>
+![Comparison Demo](results/coco128_experiment/comparisons/comparison_000000000389.jpg)
+*AdaptiVision in action: Standard detection (left) vs. Adaptive detection (right) showing improved detection of people in a complex scene.*
+
+![Architecture Diagram](results/research_paper/architecture.svg)
+*AdaptiVision system architecture: Dynamic threshold adaptation based on scene complexity analysis.*
 
 ## Key Features
 
-- **Adaptive Confidence Thresholding**: Automatically adjusts detection thresholds based on scene complexity
-- **Scene Complexity Analysis**: Evaluates scenes based on object count, size variance, and density
-- **Context-Aware Reasoning**: Uses object relationships to boost confidence of related objects
-- **Class-Specific Adjustments**: Applies tailored threshold modifications for different object classes
-- **Cross-Platform Support**: Compatible with Windows, macOS (including Apple Silicon), and Linux
-- **Rich Visualizations**: Provides detailed visualizations of threshold adaptations and detection results
+- **Scene Complexity Analysis**: Automatically analyzes the complexity of each scene.
+- **Dynamic Threshold Calculation**: Adjusts detection thresholds based on scene complexity.
+- **Context-Aware Reasoning**: Leverages object relationships to improve detection accuracy.
+- **Class-Specific Adjustments**: Applies tailored thresholds for different object classes.
+- **Improved Performance**: Up to 8.9× faster processing with better detection quality.
+
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/future-mind/AdaptiVision.git
+cd AdaptiVision
+
+# Create and activate a virtual environment (optional)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -e .
+```
+
+## Usage
+
+### Command Line Interface
+
+```bash
+# Basic object detection
+python src/cli.py detect --image path/to/image.jpg --output path/to/output.jpg
+
+# Compare standard vs. adaptive detection
+python src/cli.py compare --image path/to/image.jpg --output-dir path/to/output/
+
+# Process a batch of images
+python src/cli.py batch --input-dir path/to/images/ --output-dir path/to/output/
+```
+
+### Python API
+
+```python
+from adaptivision import AdaptiveDetector
+
+# Initialize the detector
+detector = AdaptiveDetector()
+
+# Detect objects in an image
+results = detector.predict("path/to/image.jpg")
+
+# Visualize the results
+detector.visualize("path/to/image.jpg", results, "path/to/output.jpg")
+
+# Compare with standard detection
+comparison = detector.compare("path/to/image.jpg", "path/to/output/")
+```
+
+## Project Structure
+
+- `src/`: Source code
+  - `cli.py`: Command line interface
+  - `adaptivision.py`: Main implementation
+  - `adaptive/`: Core adaptive algorithms
+  - `utils/`: Utility functions
+- `scripts/`: Helper scripts
+  - `run_experiments.py`: Run experiments on datasets
+  - `analyze_results.py`: Generate analytics from results
+  - `reproduce_experiment.py`: Reproduce paper experiments
+- `datasets/`: Contains image datasets
+  - `coco128/`: COCO128 dataset subset
+- `results/`: Generated results
+  - `coco128_experiment/`: Results from COCO128 experiment
+  - `full_coco128_experiment/`: Results from full COCO128 evaluation
+  - `research_paper/`: Research documentation and figures
+
+## Detailed Results
+
+- [COCO128 Experiment Results](results/coco128_experiment/README.md)
+- [Full Research Paper](results/research_paper/paper.md)
+- [Measurement Verification](results/coco128_experiment/measurement_verification.md)
+- [Full COCO128 Results](results/full_coco128_experiment/experiment_report.md)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Created by Abhilash Chadhar
+- Uses YOLOv8 as the base object detection system
+- Thanks to the COCO dataset creators for the test images
 
 ## Performance Highlights
 
@@ -25,106 +107,9 @@ AdaptiVision is an innovative object detection system that introduces adaptive c
 - **Minimal computational overhead**: Only 4-7ms additional processing time
 - **Dynamic threshold range**: Automatically adjusts between 0.08 (complex scenes) to 0.30 (simple scenes)
 
-## Installation
-
-### Prerequisites
-
-- Python 3.8 or higher
-- PyTorch 1.10 or higher (GPU support recommended but not required)
-- OpenCV 4.5 or higher
-
-### Setup (All Operating Systems)
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/future-mind/AdaptiVision.git
-   cd AdaptiVision
-   ```
-
-2. Create and activate a virtual environment:
-   ```bash
-   # Windows
-   python -m venv venv
-   venv\Scripts\activate
-
-   # macOS/Linux
-   python -m venv venv
-   source venv/bin/activate
-   ```
-
-3. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Install the ultralytics package (for YOLOv8 support):
-   ```bash
-   pip install ultralytics
-   ```
-
-5. Download the model weights:
-   ```bash
-   # Create weights directory
-   mkdir -p weights   # (Linux/macOS)
-   # OR
-   mkdir weights      # (Windows)
-   
-   # Download weights
-   # macOS/Linux
-   curl -L https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt -o weights/model_n.pt
-   
-   # Windows (PowerShell)
-   Invoke-WebRequest -Uri https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt -OutFile weights\model_n.pt
-   ```
-
-## Quick Start
-
-### Command Line Interface
-
-The easiest way to use AdaptiVision is through the provided CLI:
-
-```bash
-# Basic detection with adaptive thresholding
-python src/cli.py detect --image samples/bus.jpg --output results/detected.jpg
-
-# Compare standard vs. adaptive detection
-python src/cli.py compare --image samples/zidane.jpg --output-dir results/comparison
-
-# Generate visualizations showing how adaptive thresholding works
-python src/cli.py visualize --image samples/bus.jpg --output-dir results/visualizations
-
-# Process multiple images in batch mode
-python src/cli.py batch --input-dir samples --output-dir results/batch --save-json
-```
-
-### Python API
-
-```python
-from src.adaptivision import AdaptiVision
-
-# Initialize detector with adaptive confidence enabled
-detector = AdaptiVision(
-    model_path="weights/model_n.pt",
-    enable_adaptive_confidence=True,
-    context_aware=True
-)
-
-# Run detection on an image
-results = detector.predict("path/to/image.jpg")
-
-# Visualize and save results
-detector.visualize("path/to/image.jpg", results[0], "output/result.jpg")
-```
-
 ## Understanding Adaptive Thresholding
 
 AdaptiVision introduces a fundamental innovation in object detection by replacing the traditional fixed confidence threshold approach with an adaptive system that dynamically adjusts thresholds based on scene characteristics.
-
-<p align="center">
-  <img src="docs/architecture/adaptivision_architecture.svg" alt="AdaptiVision Architecture" width="90%">
-  <br>
-  <em>AdaptiVision System Architecture: Adaptive Confidence Thresholding Pipeline</em>
-</p>
 
 ### How It Works
 
@@ -154,45 +139,6 @@ AdaptiVision introduces a fundamental innovation in object detection by replacin
 | Moderate | Decent performance | Optimized thresholds for each region | Balanced detection |
 | Simple | May include false positives | Filters out low-quality detections | Better precision |
 
-## Detailed Results
-
-We've conducted extensive testing and analysis of AdaptiVision compared to standard object detection:
-
-- [COCO128 Experiment](results/coco128_experiment/README.md): Comprehensive evaluation on COCO128 dataset with detailed analytics and research paper
-- [Full COCO Research Paper](results/full_coco_research/research_paper.md): In-depth technical analysis with full COCO dataset results
-- [Research Paper](results/coco128_experiment/research_paper.md): Technical analysis of the AdaptiVision approach
-- [Measurement Verification](results/coco128_experiment/measurement_verification.md): Validation of the performance measurements
-
-### Reproducing the COCO128 Experiment
-
-We provide a script to easily reproduce our COCO128 dataset experiment:
-
-```bash
-# Make sure you have activated your virtual environment
-
-# Run the full experiment (downloads dataset, creates subset, runs benchmarks)
-python scripts/reproduce_experiment.py
-
-# Only regenerate comparison images if needed
-python scripts/reproduce_experiment.py --only-comparisons
-
-# Run with a custom number of images
-python scripts/reproduce_experiment.py --num-images 50
-
-# Skip downloading dataset and weights if you already have them
-python scripts/reproduce_experiment.py --skip-download
-```
-
-The script will:
-1. Download the COCO128 dataset (if not already downloaded)
-2. Download the YOLOv8n model weights (if needed)
-3. Create a subset of images from the dataset
-4. Run standard and adaptive detection on all images
-5. Generate visualizations, comparisons, and analytics
-6. Produce a comprehensive research paper with the findings
-
-Results will be available in the `results/coco128_experiment/` directory.
-
 ## Innovation: Why AdaptiVision Matters
 
 Traditional object detection systems rely on fixed confidence thresholds that can't adapt to varying scene complexities. This creates a fundamental trade-off:
@@ -213,7 +159,7 @@ This approach results in:
 - Improved detection in crowded scenes
 - Enhanced robotics vision with context understanding
 
-For detailed technical information, see our [Research Paper](results/coco128_experiment/research_paper.md) and [Full COCO Research Paper](results/full_coco_research/research_paper.md).
+For detailed technical information, see our [Research Paper](results/research_paper/paper.md).
 
 ## Project Structure
 
@@ -234,23 +180,19 @@ AdaptiVision/
 │   └── batch_processing.py # Process multiple images
 ├── samples/                # Sample images for testing
 ├── results/                # Output directory for results
-│   ├── coco128_experiment/ # COCO128 dataset experiment results
-│   │   ├── adaptive/       # Results from adaptive detection
-│   │   ├── analytics/      # Charts and performance analysis
-│   │   ├── comparisons/    # Side-by-side comparisons of methods
-│   │   ├── standard/       # Results from standard detection
-│   │   ├── visualizations/ # Visualizations of complexity and thresholds
-│   │   ├── README.md       # Experiment overview
-│   │   ├── research_paper.md # Technical research paper
-│   │   ├── experiment_report.md # Summary of experiment results
-│   │   ├── measurement_verification.md # Verification of measurements
-│   │   ├── detailed_results.json # Detailed results for all images
-│   │   └── summary_results.csv   # Summary statistics
-│   └── full_coco_research/ # Full COCO dataset research results
-│       ├── research_paper.md # Comprehensive research paper
-│       └── adaptivision_architecture.svg # System architecture diagram
+│   └── coco128_experiment/ # COCO128 dataset experiment results
+│       ├── adaptive/       # Results from adaptive detection
+│       ├── analytics/      # Charts and performance analysis
+│       ├── comparisons/    # Side-by-side comparisons of methods
+│       ├── standard/       # Results from standard detection
+│       ├── visualizations/ # Visualizations of complexity and thresholds
+│       ├── README.md       # Experiment overview
+│       ├── research_paper.md # Technical research paper
+│       ├── experiment_report.md # Summary of experiment results
+│       ├── measurement_verification.md # Verification of measurements
+│       ├── detailed_results.json # Detailed results for all images
+│       └── summary_results.csv   # Summary statistics
 ├── docs/                   # Documentation
-│   └── architecture/       # Architecture diagrams
 ├── tests/                  # Unit tests
 ├── weights/                # Model weights directory (created during setup)
 ├── datasets/               # Dataset directory (created during experiments)
