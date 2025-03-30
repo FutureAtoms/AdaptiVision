@@ -47,8 +47,6 @@ ENV/
 /weights/*.pth
 
 # Results (keep only coco128_experiment)
-/results/*
-!/results/coco128_experiment/
 
 # Logs
 *.log
