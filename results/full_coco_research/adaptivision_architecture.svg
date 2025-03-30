@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760">
+  <!-- Enhanced background and gradients -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="headerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3949ab;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e88e5;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="sectionGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7986cb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5c6bc0;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="sectionGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#90caf9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#64b5f6;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="innovationGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f06292;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec407a;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="featureGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffb74d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff9800;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="buttonGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#42a5f5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1976d2;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Enhanced shadows -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.2"/>
+    </filter>
+    
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    
+    <!-- Patterns -->
+    <pattern id="pattern1" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#ffffff" fill-opacity="0.1"/>
+    </pattern>
+    
+    <!-- Markers for arrows -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L10,3.5 L0,7 Z" fill="#2196f3"/>
+    </marker>
+    
+    <marker id="dashedArrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L10,3.5 L0,7 Z" fill="#90caf9"/>
+    </marker>
+    
+    <!-- Icons -->
+    <symbol id="gearIcon" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" fill="currentColor"/>
+    </symbol>
+    
+    <symbol id="analyticsIcon" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" fill="currentColor"/>
+    </symbol>
+    
+    <symbol id="tuneIcon" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" fill="currentColor"/>
+    </symbol>
+    
+    <symbol id="relationshipIcon" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="currentColor"/>
+    </symbol>
+    
+    <symbol id="detectIcon" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z" fill="currentColor"/>
+    </symbol>
+    
+    <symbol id="inputIcon" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z" fill="currentColor"/>
+    </symbol>
+  </defs>
+  
+  <!-- Main background with subtle pattern -->
+  <rect width="1000" height="760" fill="url(#bgGradient)" rx="12" ry="12" />
+  <rect width="1000" height="760" fill="url(#pattern1)" rx="12" ry="12" opacity="0.5" />
+  
+  <!-- Header bar with gradient -->
+  <rect x="10" y="10" width="980" height="60" fill="url(#headerGradient)" rx="10" ry="10" filter="url(#shadow)" />
+  <text x="500" y="50" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="26" font-weight="bold" fill="white" text-anchor="middle" filter="url(#glow)">AdaptiVision: Adaptive Context-Aware Object Detection Architecture</text>
+
+  <!-- Input Processing Section -->
+  <rect x="30" y="100" width="200" height="120" fill="url(#sectionGradient2)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="130" y="125" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a237e" text-anchor="middle">Input Processing</text>
+  
+
+  
+  <!-- Input Processing Components -->
+  <rect x="50" y="140" width="160" height="30" fill="white" rx="8" ry="8" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="130" y="160" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Image Loading</text>
+  
+  <rect x="50" y="175" width="160" height="30" fill="white" rx="8" ry="8" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="130" y="195" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">YOLOv8 Base Model</text>
+
+  <!-- Initial Detection Section -->
+  <rect x="30" y="250" width="200" height="110" fill="url(#sectionGradient2)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="130" y="275" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a237e" text-anchor="middle">Initial Detection</text>
+  
+
+  
+  <!-- Initial Detection Components -->
+  <rect x="50" y="290" width="160" height="30" fill="white" rx="8" ry="8" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="130" y="310" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Low Threshold (0.05)</text>
+  
+  <rect x="50" y="325" width="160" height="30" fill="white" rx="8" ry="8" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="130" y="345" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Potential Object List</text>
+
+  <!-- Scene Complexity Analysis Section -->
+  <rect x="260" y="100" width="240" height="180" fill="url(#sectionGradient1)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="380" y="125" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">Scene Complexity Analysis</text>
+  
+
+
+  <!-- Complexity components -->
+  <rect x="280" y="140" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="380" y="160" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Object Count (50% weight)</text>
+  
+  <rect x="280" y="175" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="380" y="195" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Size Variance (25% weight)</text>
+  
+  <rect x="280" y="210" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="380" y="230" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Object Density (25% weight)</text>
+  
+  <rect x="280" y="245" width="200" height="30" fill="url(#buttonGradient)" rx="8" ry="8" filter="url(#shadow)" />
+  <text x="380" y="265" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Complexity Score [0-1]</text>
+
+  <!-- Adaptive Threshold Section -->
+  <rect x="530" y="100" width="240" height="180" fill="url(#sectionGradient1)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="650" y="125" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="16" font-weight="bold" fill="white" text-anchor="middle">Adaptive Threshold Calculation</text>
+  
+
+  
+  <!-- Adaptive Threshold Components -->
+  <rect x="550" y="140" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="650" y="160" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Base Threshold (0.25)</text>
+  
+  <rect x="550" y="175" width="200" height="40" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="650" y="195" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Complexity Adjustment</text>
+  <text x="650" y="215" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" fill="#283593" text-anchor="middle">±0.15 based on complexity</text>
+  
+  <rect x="550" y="220" width="200" height="30" fill="url(#buttonGradient)" rx="8" ry="8" filter="url(#shadow)" />
+  <text x="650" y="240" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">Dynamic Adaptive Threshold</text>
+
+  <!-- Class-Specific Section -->
+  <rect x="260" y="340" width="240" height="145" fill="url(#sectionGradient1)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="380" y="365" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">Class-Specific Adjustments</text>
+  
+
+  
+  <!-- Class-Specific Components -->
+  <rect x="280" y="380" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="380" y="400" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Small Objects: -0.07 to -0.02</text>
+  
+  <rect x="280" y="415" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="380" y="435" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Medium Objects: -0.03 to 0.0</text>
+  
+  <rect x="280" y="450" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="380" y="470" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Large Objects: 0.0 to +0.05</text>
+
+  <!-- Context-Aware Section -->
+  <rect x="530" y="340" width="240" height="150" fill="url(#sectionGradient1)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="650" y="365" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">Context-Aware Reasoning</text>
+  
+
+  
+  <!-- Context-Aware Components -->
+  <rect x="550" y="380" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="650" y="400" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Object Relationship KB</text>
+  
+  <rect x="550" y="415" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="650" y="435" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Proximity Analysis</text>
+  
+  <rect x="550" y="450" width="200" height="30" fill="white" rx="8" ry="8" stroke="#c5cae9" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="650" y="470" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#283593" text-anchor="middle">Confidence Boosting (max 0.09)</text>
+
+  <!-- Final Detection Section -->
+  <rect x="800" y="100" width="170" height="360" fill="url(#sectionGradient2)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="885" y="125" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a237e" text-anchor="middle">Final Detection</text>
+  
+
+  
+  <!-- Final Detection Components -->
+  <rect x="820" y="140" width="130" height="30" fill="white" rx="8" ry="8" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="885" y="160" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Apply Thresholds</text>
+  
+  <rect x="820" y="175" width="130" height="30" fill="white" rx="8" ry="8" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="885" y="195" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Filtering</text>
+  
+  <rect x="820" y="210" width="130" height="30" fill="white" rx="8" ry="8" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="885" y="230" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">NMS (IoU: 0.45)</text>
+  
+  <rect x="820" y="245" width="130" height="30" fill="white" rx="8" ry="8" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="885" y="265" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Post-Processing</text>
+  
+  <rect x="820" y="325" width="130" height="50" fill="url(#buttonGradient)" rx="8" ry="8" filter="url(#shadow)" />
+  <text x="885" y="350" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Filtered Detection</text>
+  <text x="885" y="370" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Results</text>
+
+  <!-- Post-Processing Output Section -->
+  <rect x="30" y="495" width="940" height="220" fill="url(#sectionGradient2)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="500" y="520" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="18" font-weight="bold" fill="#1a237e" text-anchor="middle">Output Processing</text>
+  
+
+  
+  <!-- Output component tiles -->
+  <rect x="60" y="540" width="280" height="160" fill="white" rx="10" ry="10" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="200" y="565" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a237e" text-anchor="middle">Detection Visualization</text>
+  <text x="200" y="595" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Color-coded bounding boxes</text>
+  <text x="200" y="625" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Class name and confidence display</text>
+  <text x="200" y="655" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Adaptive threshold visualization</text>
+  <text x="200" y="685" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Complexity heatmap overlay</text>
+  
+  <rect x="360" y="540" width="280" height="160" fill="white" rx="10" ry="10" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="500" y="565" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a237e" text-anchor="middle">Comparison Visualization</text>
+  <text x="500" y="595" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Side-by-side comparison</text>
+  <text x="500" y="625" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Standard vs. Adaptive detection</text>
+  <text x="500" y="655" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Threshold difference highlighting</text>
+  <text x="500" y="685" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Performance metrics</text>
+  
+  <rect x="660" y="540" width="280" height="160" fill="white" rx="10" ry="10" stroke="#bbdefb" stroke-width="1.5" filter="url(#shadow)" />
+  <text x="800" y="565" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="16" font-weight="bold" fill="#1a237e" text-anchor="middle">Analytics</text>
+  <text x="800" y="595" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Object count comparison</text>
+  <text x="800" y="625" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Threshold distribution analysis</text>
+  <text x="800" y="655" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Scene complexity statistics</text>
+  <text x="800" y="685" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" fill="#1a237e" text-anchor="middle">Performance evaluation</text>
+
+  <!-- Connecting Arrows - Enhanced with curves -->
+  <!-- Input to Initial Detection -->
+  <path d="M130,220 Q130,235 130,250" stroke="#2196f3" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- Initial Detection to Scene Complexity -->
+  <path d="M230,300 Q245,250 260,200" stroke="#2196f3" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- Scene Complexity to Adaptive Threshold -->
+  <path d="M500,200 Q515,200 530,200" stroke="#2196f3" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- Adaptive Threshold to Class-Specific -->
+  <path d="M560,250 Q505,295 450,340" stroke="#2196f3" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- Class-Specific to Context-Aware -->
+  <path d="M500,420 Q515,420 530,420" stroke="#2196f3" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- Context-Aware to Final Detection -->
+  <path d="M770,420 Q785,400 800,345" stroke="#2196f3" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)" />
+  
+  <!-- FIXED: Initial Detection to Final Detection -->
+  <path d="M230,300 Q375,290 515,290 Q650,290 800,345" stroke="#90caf9" stroke-width="2.5" fill="none" marker-end="url(#dashedArrowhead)" stroke-dasharray="5,5" />
+  
+  <!-- Final Detection to Output -->
+  <path d="M885,460 Q885,475 885,495" stroke="#2196f3" stroke-width="2.5" fill="none" marker-end="url(#arrowhead)" />
+
+  <!-- Innovation Highlights - with enhanced presentation -->
+  <!-- Scene Complexity -->
+  <rect x="260" y="70" width="240" height="25" fill="url(#innovationGradient)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="380" y="87" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">INNOVATION: Scene Complexity Analysis</text>
+  
+  <!-- Adaptive Threshold -->
+  <rect x="530" y="70" width="240" height="25" fill="url(#innovationGradient)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="650" y="87" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">INNOVATION: Dynamic Thresholding</text>
+  
+  <!-- Context-Aware -->
+  <rect x="530" y="310" width="240" height="25" fill="url(#innovationGradient)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="650" y="327" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">INNOVATION: Context-Awareness</text>
+
+  <!-- Innovative Features box -->
+  <rect x="820" y="280" width="130" height="25" fill="url(#featureGradient)" rx="12" ry="12" filter="url(#shadow)" />
+  <text x="885" y="297" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">Key Features</text>
+</svg> 

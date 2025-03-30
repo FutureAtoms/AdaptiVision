@@ -5,6 +5,9 @@ AdaptiVision is an innovative object detection system that dynamically adjusts c
 ![Comparison Demo](results/coco128_experiment/comparisons/comparison_000000000389.jpg)
 *AdaptiVision in action: Standard detection (left) vs. Adaptive detection (right) showing improved detection of people in a complex scene.*
 
+![Complex Scene Detection](results/coco128_experiment/comparisons/comparison_complex_scene.jpg)
+*Dramatic improvement in a high-complexity scene (1.00): Standard detection found 4 objects while Adaptive detection found 18 objects with a lower threshold of 0.13, recovering books, plant details, and other items.*
+
 ![Architecture Diagram](results/research_paper/architecture.svg)
 *AdaptiVision system architecture: Dynamic threshold adaptation based on scene complexity analysis.*
 
@@ -15,6 +18,21 @@ AdaptiVision is an innovative object detection system that dynamically adjusts c
 - **Context-Aware Reasoning**: Leverages object relationships to improve detection accuracy.
 - **Class-Specific Adjustments**: Applies tailored thresholds for different object classes.
 - **Improved Performance**: Up to 8.9× faster processing with better detection quality.
+
+## Class-Specific Performance
+
+Our experiments on the COCO128 dataset showed dramatic improvements for particularly challenging object classes:
+
+| Class       | Standard Detection | Adaptive Detection | Improvement |
+|-------------|-------------------|-------------------|-------------|
+| person      | 217               | 283               | +30.4%      |
+| book        | 12                | 29                | +141.7%     |
+| bottle      | 43                | 62                | +44.2%      |
+| cell phone  | 5                 | 12                | +140.0%     |
+| remote      | 6                 | 11                | +83.3%      |
+| cup         | 21                | 28                | +33.3%      |
+
+Small objects like books and cell phones showed the most dramatic improvements, highlighting AdaptiVision's ability to recover objects that are typically missed by standard detection methods.
 
 ## Installation
 

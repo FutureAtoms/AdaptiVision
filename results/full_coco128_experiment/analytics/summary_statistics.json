@@ -1,0 +1,12 @@
+{
+  "total_images": 128,
+  "success_count": 128,
+  "failure_count": 0,
+  "avg_scene_complexity": 0.6513690071019547,
+  "avg_threshold_change": -0.041800619968204,
+  "avg_standard_objects": 4.6328125,
+  "avg_adaptive_objects": 5.84375,
+  "avg_standard_time": 0.03243912570178509,
+  "avg_adaptive_time": 0.023513633757829666,
+  "avg_speed_improvement": 1.2515769109855426
+}
