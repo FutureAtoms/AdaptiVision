@@ -2,13 +2,13 @@
 
 AdaptiVision is an innovative object detection system that dynamically adjusts confidence thresholds based on scene complexity and context awareness, resulting in faster and more accurate object detection compared to traditional fixed-threshold approaches.
 
-![Comparison Demo](results/coco128_experiment/comparisons/comparison_000000000389.jpg)
-*AdaptiVision in action: Standard detection (left) vs. Adaptive detection (right) showing improved detection of people in a complex scene.*
+![Comparison Demo](research_paper/figures/comparison_000000000632.jpg)
+*AdaptiVision in action: Standard detection (left) vs. Adaptive detection (right) showing improved detection in a typical scene.*
 
-![Complex Scene Detection](results/coco128_experiment/comparisons/comparison_complex_scene.jpg)
-*Dramatic improvement in a high-complexity scene (1.00): Standard detection found 4 objects while Adaptive detection found 18 objects with a lower threshold of 0.13, recovering books, plant details, and other items.*
+![Complex Scene Detection](research_paper/figures/comparison_000000014038.jpg)
+*Improvement in a high-complexity scene: Standard detection vs. Adaptive detection.*
 
-![Architecture Diagram](results/research_paper/architecture.svg)
+![Architecture Diagram](research_paper/figures/architecture.png)
 *AdaptiVision system architecture: Dynamic threshold adaptation based on scene complexity analysis.*
 
 ## Key Features
@@ -41,33 +41,155 @@ Small objects like books and cell phones showed the most dramatic improvements, 
 git clone https://github.com/future-mind/AdaptiVision.git
 cd AdaptiVision
 
-# Create and activate a virtual environment (optional)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Create and activate a virtual environment (recommended)
+python3 -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 
-# Install dependencies
+# Install the package and its dependencies
 pip install -e .
 
-# IMPORTANT: Install Ultralytics manually (Version 8.3.107 confirmed working)
+# IMPORTANT: Install Ultralytics version 8.3.107 (tested version)
+# Newer versions might work but could introduce breaking changes.
 pip install ultralytics==8.3.107
+
+# (Optional) Download sample weights if not included
+# [Add command here if weights need manual download]
 ```
 
-## Usage
+## Quick Start: Using the Command Line Interface (`cli.py`)
 
-### Command Line Interface
+The primary way to use AdaptiVision is through its command-line interface.
+
+### 1. Detecting Objects in a Single Image
+
+Use the `detect` command to run AdaptiVision (or standard YOLO) on a single image and save the annotated output.
 
 ```bash
-# Basic object detection
-python src/cli.py detect --image path/to/image.jpg --output path/to/output.jpg
+# Run AdaptiVision (adaptive + context) on an image
+python src/cli.py detect \
+  --image samples/bus.jpg \
+  --output results/bus_detection_adaptive.jpg \
+  --weights weights/model_n.pt \
+  --device mps # Use 'cuda', 'cpu', or 'auto' as needed
 
-# Compare standard vs. adaptive detection
-python src/cli.py compare --image path/to/image.jpg --output-dir path/to/output/
-
-# Process a batch of images
-python src/cli.py batch --input-dir path/to/images/ --output-dir path/to/output/
+# Run standard YOLO detection (disable adaptive features)
+python src/cli.py detect \
+  --image samples/zidane.jpg \
+  --output results/zidane_detection_standard.jpg \
+  --weights weights/model_n.pt \
+  --disable-adaptive \
+  --disable-context
 ```
 
-### Python API
+### 2. Comparing Standard vs. Adaptive Detection
+
+Use the `compare` command to generate a side-by-side image showing the differences between standard YOLO and AdaptiVision for a single input image.
+
+```bash
+python src/cli.py compare \
+  --image samples/street.jpg \
+  --output-dir results/comparisons/ \
+  --weights weights/model_n.pt \
+  --device mps
+```
+This will save an image named `comparison_street.jpg` in the `results/comparisons/` directory.
+
+### 3. Visualizing Adaptive Mechanisms
+
+Use the `visualize` command to generate images showing the calculated scene complexity and the resulting adaptive threshold map used by AdaptiVision.
+
+```bash
+python src/cli.py visualize \
+  --image samples/complex_scene.jpg \
+  --output-dir results/visualizations/ \
+  --weights weights/model_n.pt \
+  --device mps
+```
+This will save `complexity_complex_scene.jpg`, `threshold_map_complex_scene.jpg`, and `metadata_complex_scene.json` in the `results/visualizations/` directory.
+
+### 4. Processing a Batch of Images
+
+Use the `batch` command to run detection on all images within a directory. You can enable saving detailed JSON results per image and use multiple workers for parallel processing.
+
+```bash
+# Run AdaptiVision on all images in samples/coco/
+python src/cli.py batch \
+  --input-dir samples/coco/ \
+  --output-dir results/batch_output_adaptive/ \
+  --weights weights/model_n.pt \
+  --device mps \
+  --workers 2 # Use multiple CPU cores for processing
+
+# Run standard detection and save JSON results
+python src/cli.py batch \
+  --input-dir samples/coco/ \
+  --output-dir results/batch_output_standard/ \
+  --weights weights/model_n.pt \
+  --disable-adaptive \
+  --disable-context \
+  --save-json # Save detailed detection results per image
+```
+
+## Running Experiments and Evaluations
+
+For more formal evaluations and comparisons across datasets:
+
+### 1. Run Comprehensive Comparison (`run_experiments.py`)
+
+This script runs both standard and adaptive methods on a dataset, saves detailed results, generates comparison images, visualizations, and analytics.
+
+```bash
+python scripts/run_experiments.py \
+  --data datasets/coco128/images/train2017/ \
+  --output results/my_coco128_experiment/ \
+  --weights weights/model_n.pt \
+  --device mps
+```
+Check the `results/my_coco128_experiment/` directory for extensive outputs, including an `experiment_report.md`.
+
+### 2. Generate COCO Format Results (`save_coco_results.py`)
+
+This script processes a dataset and saves predictions in the standard COCO JSON format, required for official mAP evaluation.
+
+```bash
+# Generate AdaptiVision predictions for COCO val
+python scripts/save_coco_results.py \
+  --dataset-path datasets/coco/images/val2017/ \
+  --gt-annotations datasets/coco/annotations/instances_val2017.json \
+  --weights weights/model_n.pt \
+  --output-json results/coco_eval/adaptivision_preds.json \
+  --method adaptivision \
+  --device mps
+
+# Generate Baseline predictions
+python scripts/save_coco_results.py \
+  --dataset-path datasets/coco/images/val2017/ \
+  --gt-annotations datasets/coco/annotations/instances_val2017.json \
+  --weights weights/model_n.pt \
+  --output-json results/coco_eval/baseline_preds.json \
+  --method baseline \
+  --device mps
+```
+
+### 3. Evaluate COCO Results (`evaluate_coco.py`)
+
+Uses the `pycocotools` library to calculate standard mAP metrics from the ground truth and prediction JSON files.
+
+```bash
+# Evaluate the AdaptiVision predictions
+python scripts/evaluate_coco.py \
+  --annotation-file datasets/coco/annotations/instances_val2017.json \
+  --results-file results/coco_eval/adaptivision_preds.json
+
+# Evaluate the Baseline predictions
+python scripts/evaluate_coco.py \
+  --annotation-file datasets/coco/annotations/instances_val2017.json \
+  --results-file results/coco_eval/baseline_preds.json
+```
+
+## Using AdaptiVision as a Python Library
+
+You can also import and use the `AdaptiveDetector` directly in your Python code.
 
 ```python
 from adaptivision import AdaptiveDetector
@@ -87,27 +209,47 @@ comparison = detector.compare("path/to/image.jpg", "path/to/output/")
 
 ## Project Structure
 
-- `src/`: Source code
-  - `cli.py`: Command line interface
-  - `adaptivision.py`: Main implementation
-  - `adaptive/`: Core adaptive algorithms
-  - `utils/`: Utility functions
-- `scripts/`: Helper scripts
-  - `run_experiments.py`: Run experiments on datasets
-  - `analyze_results.py`: Generate analytics from results
-- `examples/`: Example scripts and notebooks
-  - `basic_detection.py`: Simple detection example
-  - `batch_processing.py`: Process multiple images
-- `samples/`: Sample images for testing
-- `results/`: Generated results
-  - `coco128_experiment/`: Results from COCO128 experiment
-  - `full_coco128_experiment/`: Results from full COCO128 evaluation
-  - `research_paper/`: Research documentation and figures
+```
+AdaptiVision/
+├── src/                    # Source code
+│   ├── adaptivision.py     # Main detector implementation
+│   ├── cli.py              # Command-line interface
+│   ├── compare_methods.py  # Script to compare adaptive vs standard detection
+│   ├── create_visualizations.py # Generate visualizations of adaptive thresholds
+│   └── utils.py            # Utility functions
+├── scripts/                # Utility scripts for experiments
+│   └── run_experiments.py  # Run comprehensive experiments and analytics
+├── examples/               # Example scripts and notebooks
+│   ├── basic_detection.py  # Simple detection example
+│   └── batch_processing.py # Process multiple images
+├── samples/                # Sample images for testing
+├── results/                # Output directory for results
+│   └── coco128_experiment/ # COCO128 dataset experiment results
+│       ├── adaptive/       # Results from adaptive detection
+│       ├── analytics/      # Charts and performance analysis
+│       ├── comparisons/    # Side-by-side comparisons of methods
+│       ├── standard/       # Results from standard detection
+│       ├── visualizations/ # Visualizations of complexity and thresholds
+│       ├── README.md       # Experiment overview
+│       ├── research_paper.md # Technical research paper
+│       ├── experiment_report.md # Summary of experiment results
+│       ├── measurement_verification.md # Verification of measurements
+│       ├── detailed_results.json # Detailed results for all images
+│       └── summary_results.csv   # Summary statistics
+├── docs/                   # Documentation
+├── tests/                  # Unit tests
+├── weights/                # Model weights directory (created during setup)
+├── datasets/               # Dataset directory (created during experiments)
+├── requirements.txt        # Package dependencies
+├── setup.py                # Installation script
+└── README.md               # Project overview
+```
 
-## Detailed Results
+## Detailed Documentation
 
-- [Full COCO128 Experiment Results](results/full_coco128_experiment/experiment_report.md)
-- [Full Research Paper](results/research_paper/paper.md)
+- [**Script Usage and Testing Guide**](SCRIPT_USAGE.md): Detailed explanation of all executable scripts, their options, and test commands.
+- [Full COCO128 Experiment Results](results/full_coco128_experiment/experiment_report.md) (Example)
+- [Full Research Paper](results/research_paper/adaptivision_paper.pdf) (PDF)
 
 ## License
 

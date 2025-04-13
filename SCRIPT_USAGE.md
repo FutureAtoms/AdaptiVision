@@ -1,40 +1,90 @@
-# AdaptiVision Script Usage Guide
+# AdaptiVision Script Usage and Testing Guide
 
-This document details the purpose and usage of the various Python scripts included in the AdaptiVision project.
+This document details the purpose, usage, and testing status of the various Python scripts included in the AdaptiVision project.
+
+**Note:** All tests were run using the Python interpreter from the project's virtual environment (`/Users/abhilashchadhar/uncloud/Learn_apativision/AdaptiVision/venv/bin/python`) to ensure all dependencies were met.
 
 ## Quick Script Selection Guide
 
-*   **For quick predictions and visual output on single images or directories:** Use `src/adaptivision.py`.
+*   **For quick predictions and visual output on single images or directories:** Use `src/cli.py detect` or `src/cli.py batch`.
 *   **For generating standard COCO evaluation metrics (like mAP):** Use the `scripts/save_coco_results.py` + `scripts/evaluate_coco.py` pipeline.
 *   **For a detailed comparison between standard YOLO and AdaptiVision with ablation studies and analytics:** Use `scripts/run_experiments.py`.
 *   **For generating specific plots from experiment results:** Use `scripts/generate_..._plot.py` scripts.
+*   **For simple code examples:** See `examples/basic_detection.py` and `examples/batch_processing.py`.
 
 ## Detailed Script Descriptions
 
-### 1. `src/adaptivision.py` (Main Prediction Script)
+### 1. `src/cli.py` (Main Command-Line Interface)
 
-*   **Purpose:** Performs object detection using either standard YOLO settings or the AdaptiVision enhancements on a single image or all images within a specified directory. Saves annotated output images.
-*   **When to Use:** Ideal for quick testing, generating visual examples, or applying the model to a set of images when formal COCO evaluation is not the primary goal.
-*   **Key Options:**
-    *   `--input_path`: (Required) Path to a single input image file or a directory containing images.
-    *   `--output_dir`: Directory where annotated output images will be saved (default: `results/output`).
-    *   `--weights`: Path to the model weights file (default: `weights/model_n.pt`).
-    *   `--device`: Processing device ('auto', 'cpu', 'cuda', 'mps') (default: 'auto').
-    *   `--conf`: Base confidence threshold (default: 0.25).
-    *   `--iou`: IoU threshold for Non-Maximum Suppression (NMS) (default: 0.45).
-    *   `--adaptive`: Enable AdaptiVision's adaptive confidence thresholding (flag, default: disabled).
-    *   `--context`: Enable AdaptiVision's context-aware reasoning (flag, default: disabled).
-    *   `--classes`: Filter detections by specific class IDs (e.g., `--classes 0 2` for persons and cars).
-    *   `--no-verbose`: Suppress detailed print output for each image when processing directories (shows progress bar instead).
-*   **Example Commands:**
-    *   Run AdaptiVision on a single image using MPS:
-        ```bash
-        python src/adaptivision.py --input_path samples/zidane.jpg --output_dir results/single_test --adaptive --context --device mps
-        ```
-    *   Run standard detection on a directory of images using CPU, saving to `results/standard_run`:
-        ```bash
-        python src/adaptivision.py --input_path datasets/coco/images/val2017/ --output_dir results/standard_run --device cpu --no-verbose
-        ```
+*   **Purpose**: Provides a unified command-line interface (`adaptivision` if installed, or `python src/cli.py`) for various AdaptiVision functionalities.
+*   **Dependencies**: `requirements.txt`, valid model weights (usually), valid input image/directory (depending on subcommand).
+*   **Entry Point**: `python src/cli.py <command> [options]` or `adaptivision <command> [options]` if installed.
+
+#### 1.1 `detect` Subcommand
+
+*   **Purpose**: Perform detection on a single image.
+*   **Key Options**: `--image` (required), `--output`, `--weights`, `--conf-thres`, `--iou-thres`, `--device`, `--disable-adaptive`, `--disable-context`.
+*   **Output**: Single annotated output image specified by `--output`.
+*   **Test Command Used**:
+    ```bash
+    /Users/abhilashchadhar/uncloud/Learn_apativision/AdaptiVision/venv/bin/python src/cli.py detect --image samples/bus.jpg --output results/test_cli_detect.jpg
+    ```
+*   **Example Command**:
+    ```bash
+    python src/cli.py detect --image path/to/image.jpg --output results/cli_detection.jpg
+    ```
+*   **Test Status**: **Passed**
+
+#### 1.2 `compare` Subcommand
+
+*   **Purpose**: Generate a side-by-side comparison image of standard vs. adaptive detection for a single input image.
+*   **Key Options**: `--image` (required), `--output-dir`, `--weights`, `--conf-thres`, `--iou-thres`, `--device`.
+*   **Output**: Saves `comparison_<image_filename>.jpg` in the directory specified by `--output-dir`.
+*   **Test Command Used**:
+    ```bash
+    /Users/abhilashchadhar/uncloud/Learn_apativision/AdaptiVision/venv/bin/python src/cli.py compare --image samples/bus.jpg --output-dir results/test_cli_compare
+    ```
+*   **Example Command**:
+    ```bash
+    python src/cli.py compare --image path/to/image.jpg --output-dir results/my_comparisons
+    ```
+*   **Test Status**: **Passed**
+
+#### 1.3 `visualize` Subcommand
+
+*   **Purpose**: Create detailed visualizations (complexity map, threshold map, metadata) related to the adaptive process for a single input image.
+*   **Key Options**: `--image` (required), `--output-dir`, `--weights`, `--device`.
+*   **Output**: Saves `complexity_<image_filename>.jpg`, `threshold_map_<image_filename>.jpg`, and `metadata_<image_stem>.json` in the directory specified by `--output-dir`.
+*   **Test Command Used**:
+    ```bash
+    /Users/abhilashchadhar/uncloud/Learn_apativision/AdaptiVision/venv/bin/python src/cli.py visualize --image samples/bus.jpg --output-dir results/test_cli_visualize
+    ```
+*   **Example Command**:
+    ```bash
+    python src/cli.py visualize --image path/to/image.jpg --output-dir results/my_visualizations
+    ```
+*   **Test Status**: **Passed**
+
+#### 1.4 `batch` Subcommand
+
+*   **Purpose**: Process a directory of images in batch mode via the main CLI.
+*   **Key Options**: `--input-dir` (required), `--output-dir`, `--weights`, `--conf-thres`, `--iou-thres`, `--device`, `--workers`, `--save-json`, `--disable-adaptive`, `--disable-context`.
+*   **Output**: Annotated images and optional JSON files in the `--output-dir`.
+*   **Test Commands Used**:
+    ```bash
+    # On samples/coco (after image replacement)
+    /Users/abhilashchadhar/uncloud/Learn_apativision/AdaptiVision/venv/bin/python src/cli.py batch --input-dir samples/coco --output-dir results/test_cli_batch --save-json --workers 2
+
+    # On samples/batch (after image replacement)
+    /Users/abhilashchadhar/uncloud/Learn_apativision/AdaptiVision/venv/bin/python src/cli.py batch --input-dir samples/batch --output-dir results/test_batch --save-json --workers 2
+    ```
+*   **Example Command**:
+    ```bash
+    python src/cli.py batch --input-dir path/to/images --output-dir results/cli_batch_output --save-json
+    ```
+*   **Test Status**: **Passed** (after replacing corrupted sample images)
+
+---
 
 ### 2. `scripts/save_coco_results.py`
 
@@ -86,6 +136,9 @@ This document details the purpose and usage of the various Python scripts includ
           --device mps \
           --no-context
         ```
+*   **Test Status**: Not explicitly tested in `script_usage_and_tests.md`, assumed functional as part of the evaluation pipeline.
+
+---
 
 ### 3. `scripts/evaluate_coco.py`
 
@@ -108,6 +161,9 @@ This document details the purpose and usage of the various Python scripts includ
       --annotation-file datasets/coco/annotations/instances_val2017.json \
       --results-file results/coco_eval/adaptivision_preds.json
     ```
+*   **Test Status**: Not explicitly tested in `script_usage_and_tests.md`, assumed functional as part of the evaluation pipeline.
+
+---
 
 ### 4. `scripts/run_experiments.py`
 
@@ -124,10 +180,15 @@ This document details the purpose and usage of the various Python scripts includ
     *   `adaptive/`: Annotated images from adaptive detection.
     *   `comparisons/`: Side-by-side comparison images.
     *   `visualizations/<image_stem>/`: Detailed visualizations per image (complexity, thresholds).
-    *   `analytics/`: Plots and summary CSV files.
+    *   `analytics/`: Plots and summary CSV/JSON files.
     *   `detailed_results.json`: Raw data for every image (timings, counts, scores, etc.).
     *   `summary_results.csv`: Aggregated results per image.
-*   **Example Command:**
+    *   `experiment_report.md`: Markdown report summarizing the overall experiment.
+*   **Test Command Used**:
+    ```bash
+    /Users/abhilashchadhar/uncloud/Learn_apativision/AdaptiVision/venv/bin/python scripts/run_experiments.py --data samples/coco --output results/test_run_experiment_mps_fixed --weights weights/model_n.pt --device mps
+    ```
+*   **Example Command**:
     ```bash
     python scripts/run_experiments.py \
       --data samples/coco/ \
@@ -135,8 +196,12 @@ This document details the purpose and usage of the various Python scripts includ
       --weights weights/model_n.pt \
       --device mps
     ```
+*   **Test Status**: **Passed**
+*   **Notes**: Primary script for full dataset experiments. Requires correct `sys.path` setup and robust image handling.
 
-### 5. Plotting Scripts (`generate_*.py`)
+---
+
+### 5. Plotting Scripts (`scripts/generate_*.py`)
 
 *   **Purpose:** These scripts (`generate_capped_time_plot.py`, `generate_overhead_plot.py`, etc.) are designed to consume the `summary_results.csv` file generated by `run_experiments.py` and create specific plots for analysis (e.g., processing time comparison, time overhead distribution).
 *   **When to Use:** After running `run_experiments.py`, use these to generate publication-ready or analysis-focused plots based on the collected summary data.
@@ -147,4 +212,74 @@ This document details the purpose and usage of the various Python scripts includ
     ```
     ```bash
     python scripts/generate_capped_time_plot.py
-    ``` 
+    ```
+*   **Test Status**: Not explicitly tested, assumed functional.
+
+---
+
+### 6. `examples/basic_detection.py`
+
+*   **Purpose**: Demonstrates basic single-image object detection using the `AdaptiVision` class, including optional visualization and printing results to the console.
+*   **Key Options**: `--image` (required), `--output`, `--weights`, `--conf-thres`, `--iou-thres`, `--device`, `--disable-adaptive`, `--disable-context`.
+*   **Output**: Prints detection summary, saves annotated image, attempts to display image.
+*   **Test Command Used**:
+    ```bash
+    /Users/abhilashchadhar/uncloud/Learn_apativision/AdaptiVision/venv/bin/python examples/basic_detection.py --image samples/bus.jpg --output results/test_basic_detection.jpg
+    ```
+*   **Example Command**:
+    ```bash
+    python examples/basic_detection.py --image path/to/your/image.jpg --output results/my_detection.jpg
+    ```
+*   **Test Status**: **Passed**
+*   **Notes**: Display logic (`cv2.waitKey(0)`) might cause interruptions in some environments.
+
+---
+
+### 7. `examples/batch_processing.py`
+
+*   **Purpose**: Processes a directory of images in batch mode, optionally using parallel workers and saving detailed detection results as individual JSON files alongside output images.
+*   **Key Options**: `--input-dir` (required), `--output-dir`, `--weights`, `--conf-thres`, `--iou-thres`, `--device`, `--workers`, `--image-types`, `--save-json`, `--disable-adaptive`, `--disable-context`.
+*   **Output**: Annotated images, optional `.json` files, prints summary statistics.
+*   **Test Command Used**:
+    ```bash
+    # Tested on samples/batch directory after image replacement
+    /Users/abhilashchadhar/uncloud/Learn_apativision/AdaptiVision/venv/bin/python examples/batch_processing.py --input-dir samples/batch --output-dir results/test_batch --save-json --workers 2
+    ```
+*   **Example Command**:
+    ```bash
+    python examples/batch_processing.py --input-dir path/to/your/images --output-dir path/to/batch_results --save-json --workers 4
+    ```
+*   **Test Status**: **Passed** (after replacing corrupted sample images)
+*   **Notes**: Parallel processing logic works well.
+
+---
+
+### 8. `src/compare_methods.py` (Internal Use / Direct Execution)
+
+*   **Purpose**: Compares standard vs. adaptive detection for a single image. Primarily called by `src/cli.py compare`, but can be run directly.
+*   **Direct Execution Options**: `--image` (required), `--output-dir`, `--weights`, `--conf`, `--iou`, `--device`.
+*   **Output**: Saves `comparison_<image_filename>.jpg`.
+*   **Test Status**: **Passed** (indirectly via `cli compare` test)
+*   **Notes**: Requires correct `sys.path` if run directly.
+
+---
+
+### 9. `src/create_visualizations.py` (Internal Use / Direct Execution)
+
+*   **Purpose**: Generates detailed visualizations for a single image. Primarily called by `src/cli.py visualize`, but can be run directly.
+*   **Direct Execution Options**: `--image` (required), `--output-dir`, `--weights`, `--device`.
+*   **Output**: Saves `complexity_*.jpg`, `threshold_map_*.jpg`, `metadata_*.json`.
+*   **Test Status**: **Passed** (indirectly via `cli visualize` test)
+*   **Notes**: Requires correct `sys.path` if run directly.
+
+---
+
+### 10. `src/adaptivision.py` (Deprecated Standalone Script?)
+
+*   **Note:** The original `SCRIPT_USAGE.md` described a standalone `src/adaptivision.py` script for single/directory processing. This functionality seems to have been integrated into `src/cli.py` (`detect` and `batch` subcommands). The direct execution of `src/adaptivision.py` might be deprecated or intended only for library use. Use `src/cli.py` instead for command-line operations.
+
+---
+
+## Overall Test Summary
+
+All tested scripts function correctly when provided with valid input data and run within the correct Python environment (`venv`). Issues related to environment setup, internal imports, visualization logic, and corrupted sample images were identified and fixed during the testing process documented in `script_usage_and_tests.md`. 

@@ -57,6 +57,9 @@ results/coco_val2017/
 *.out
 log.txt
 
+# TeX build artifacts
+*.aux
+
 # Testing
 .coverage
 htmlcov/
@@ -125,6 +128,9 @@ ENV/
 *.log
 *.out
 log.txt
+
+# TeX build artifacts
+*.aux
 
 # Testing
 .coverage
