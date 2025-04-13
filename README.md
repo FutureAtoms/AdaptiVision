@@ -192,19 +192,52 @@ python scripts/evaluate_coco.py \
 You can also import and use the `AdaptiveDetector` directly in your Python code.
 
 ```python
-from adaptivision import AdaptiveDetector
+from src.adaptivision import AdaptiVision
+import cv2
 
-# Initialize the detector
-detector = AdaptiveDetector()
+# Initialize the detector (specify weights, device, etc.)
+detector = AdaptiVision(
+    model_path='weights/model_n.pt',
+    device='auto', # or 'cpu', 'cuda', 'mps'
+    conf_threshold=0.25, # Base confidence
+    iou_threshold=0.45,
+    enable_adaptive_confidence=True, # Enable adaptive thresholds
+    context_aware=True # Enable context reasoning
+)
+
+# Path to your image
+image_path = "samples/bus.jpg"
+output_path = "results/python_api_detection.jpg"
 
 # Detect objects in an image
-results = detector.predict("path/to/image.jpg")
+# predict() returns a list of dictionaries, one per image processed.
+results = detector.predict(image_path)
 
-# Visualize the results
-detector.visualize("path/to/image.jpg", results, "path/to/output.jpg")
+# Access results for the first (and only) image
+detection_data = results[0] if results else None
 
-# Compare with standard detection
-comparison = detector.compare("path/to/image.jpg", "path/to/output/")
+# Print basic summary
+if detection_data and 'boxes' in detection_data:
+    print(f"Detected {len(detection_data['boxes'])} objects.")
+    if detection_data.get('adaptive_threshold'):
+        print(f"Scene Complexity: {detection_data['scene_complexity']:.3f}")
+        print(f"Adaptive Threshold: {detection_data['adaptive_threshold']:.3f}")
+
+# Visualize the results and save to file
+# The visualize method returns the image array (or None)
+output_image_array = detector.visualize(
+    image_path=image_path,
+    detections=detection_data,
+    output_path=output_path
+)
+
+print(f"Detection visualization saved to {output_path}")
+
+# Optionally display the image
+# if output_image_array is not None:
+#     cv2.imshow("Detection", output_image_array)
+#     cv2.waitKey(0)
+#     cv2.destroyAllWindows()
 ```
 
 ## Project Structure
@@ -212,44 +245,36 @@ comparison = detector.compare("path/to/image.jpg", "path/to/output/")
 ```
 AdaptiVision/
 ├── src/                    # Source code
-│   ├── adaptivision.py     # Main detector implementation
-│   ├── cli.py              # Command-line interface
-│   ├── compare_methods.py  # Script to compare adaptive vs standard detection
-│   ├── create_visualizations.py # Generate visualizations of adaptive thresholds
-│   └── utils.py            # Utility functions
-├── scripts/                # Utility scripts for experiments
-│   └── run_experiments.py  # Run comprehensive experiments and analytics
-├── examples/               # Example scripts and notebooks
-│   ├── basic_detection.py  # Simple detection example
-│   └── batch_processing.py # Process multiple images
-├── samples/                # Sample images for testing
-├── results/                # Output directory for results
-│   └── coco128_experiment/ # COCO128 dataset experiment results
-│       ├── adaptive/       # Results from adaptive detection
-│       ├── analytics/      # Charts and performance analysis
-│       ├── comparisons/    # Side-by-side comparisons of methods
-│       ├── standard/       # Results from standard detection
-│       ├── visualizations/ # Visualizations of complexity and thresholds
-│       ├── README.md       # Experiment overview
-│       ├── research_paper.md # Technical research paper
-│       ├── experiment_report.md # Summary of experiment results
-│       ├── measurement_verification.md # Verification of measurements
-│       ├── detailed_results.json # Detailed results for all images
-│       └── summary_results.csv   # Summary statistics
-├── docs/                   # Documentation
-├── tests/                  # Unit tests
-├── weights/                # Model weights directory (created during setup)
-├── datasets/               # Dataset directory (created during experiments)
-├── requirements.txt        # Package dependencies
-├── setup.py                # Installation script
-└── README.md               # Project overview
+│   ├── adaptivision.py     # Core AdaptiveDetector class and logic
+│   ├── cli.py              # Command-line interface entry point
+│   ├── compare_methods.py  # Logic for standard vs. adaptive comparison
+│   ├── create_visualizations.py # Logic for generating visualizations
+│   └── utils.py            # Utility functions (plotting, image loading, etc.)
+├── scripts/                # Standalone scripts for evaluation and experiments
+│   ├── evaluate_coco.py    # Calculate COCO mAP scores
+│   ├── generate_*.py       # Scripts to generate plots from experiment results
+│   ├── run_experiments.py  # Run comprehensive comparison experiments
+│   └── save_coco_results.py # Generate COCO-format prediction files
+├── examples/               # Example Python scripts demonstrating library usage
+│   ├── basic_detection.py  # Simple detection using the AdaptiveDetector class
+│   └── batch_processing.py # Example of processing multiple images using the class
+├── samples/                # Sample images for quick testing
+├── results/                # Default output directory for results and experiments
+├── docs/                   # Project documentation
+├── research_paper/         # LaTeX source and figures for the paper
+│   └── adaptivision_paper.pdf # Compiled research paper
+├── weights/                # Directory for model weights (e.g., model_n.pt)
+├── datasets/               # Directory for datasets (e.g., COCO)
+├── requirements.txt        # Python package dependencies
+├── setup.py                # Installation script (for `pip install -e .`)
+├── LICENSE                 # Project license
+└── README.md               # This file
 ```
 
 ## Detailed Documentation
 
 - [**Script Usage and Testing Guide**](SCRIPT_USAGE.md): Detailed explanation of all executable scripts, their options, and test commands.
-- [Full COCO128 Experiment Results](results/full_coco128_experiment/experiment_report.md) (Example)
-- [Full Research Paper](results/research_paper/adaptivision_paper.pdf) (PDF)
+- [Full Research Paper](research_paper/adaptivision_paper.pdf) (PDF)
 
 ## License
 
@@ -321,44 +346,37 @@ This approach results in:
 - Improved detection in crowded scenes
 - Enhanced robotics vision with context understanding
 
-For detailed technical information, see our [Research Paper](results/research_paper/paper.md).
+For detailed technical information, see our [Research Paper](research_paper/adaptivision_paper.pdf).
 
 ## Project Structure
 
 ```
 AdaptiVision/
 ├── src/                    # Source code
-│   ├── adaptivision.py     # Main detector implementation
-│   ├── cli.py              # Command-line interface
-│   ├── compare_methods.py  # Script to compare adaptive vs standard detection
-│   ├── create_visualizations.py # Generate visualizations of adaptive thresholds
-│   └── utils.py            # Utility functions
-├── scripts/                # Utility scripts for experiments
-│   └── run_experiments.py  # Run comprehensive experiments and analytics
-├── examples/               # Example scripts and notebooks
-│   ├── basic_detection.py  # Simple detection example
-│   └── batch_processing.py # Process multiple images
-├── samples/                # Sample images for testing
-├── results/                # Output directory for results
-│   └── coco128_experiment/ # COCO128 dataset experiment results
-│       ├── adaptive/       # Results from adaptive detection
-│       ├── analytics/      # Charts and performance analysis
-│       ├── comparisons/    # Side-by-side comparisons of methods
-│       ├── standard/       # Results from standard detection
-│       ├── visualizations/ # Visualizations of complexity and thresholds
-│       ├── README.md       # Experiment overview
-│       ├── research_paper.md # Technical research paper
-│       ├── experiment_report.md # Summary of experiment results
-│       ├── measurement_verification.md # Verification of measurements
-│       ├── detailed_results.json # Detailed results for all images
-│       └── summary_results.csv   # Summary statistics
-├── docs/                   # Documentation
-├── tests/                  # Unit tests
-├── weights/                # Model weights directory (created during setup)
-├── datasets/               # Dataset directory (created during experiments)
-├── requirements.txt        # Package dependencies
-├── setup.py                # Installation script
-└── README.md               # Project overview
+│   ├── adaptivision.py     # Core AdaptiveDetector class and logic
+│   ├── cli.py              # Command-line interface entry point
+│   ├── compare_methods.py  # Logic for standard vs. adaptive comparison
+│   ├── create_visualizations.py # Logic for generating visualizations
+│   └── utils.py            # Utility functions (plotting, image loading, etc.)
+├── scripts/                # Standalone scripts for evaluation and experiments
+│   ├── evaluate_coco.py    # Calculate COCO mAP scores
+│   ├── generate_*.py       # Scripts to generate plots from experiment results
+│   ├── run_experiments.py  # Run comprehensive comparison experiments
+│   └── save_coco_results.py # Generate COCO-format prediction files
+├── examples/               # Example Python scripts demonstrating library usage
+│   ├── basic_detection.py  # Simple detection using the AdaptiveDetector class
+│   └── batch_processing.py # Example of processing multiple images using the class
+├── samples/                # Sample images for quick testing
+├── results/                # Default output directory for results and experiments
+├── docs/                   # Project documentation
+├── research_paper/         # LaTeX source and figures for the paper
+│   └── adaptivision_paper.pdf # Compiled research paper
+├── weights/                # Directory for model weights (e.g., model_n.pt)
+├── datasets/               # Directory for datasets (e.g., COCO)
+├── requirements.txt        # Python package dependencies
+├── setup.py                # Installation script (for `pip install -e .`)
+├── LICENSE                 # Project license
+└── README.md               # This file
 ```
 
 ## Requirements
