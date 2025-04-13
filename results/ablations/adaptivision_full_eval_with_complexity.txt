@@ -1,0 +1,215 @@
+loading annotations into memory...
+Done (t=0.14s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=0.09s)
+creating index...
+index created!
+
+--- Running COCO Evaluation (Overall) for: results/ablations/adaptivision_full_preds.json ---
+Evaluating on all images...
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=4.53s).
+Accumulating evaluation results...
+DONE (t=0.77s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.340
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.470
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.372
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.150
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.377
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.490
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.277
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.414
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.428
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.196
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.477
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.600
+
+Per-Class AP @[ IoU=0.50:0.95 | area=   all | maxDets=100 ]:
+airplane          : 0.620 | apple             : 0.142 | backpack          : 0.080
+banana            : 0.226 | baseball bat      : 0.199 | baseball glove    : 0.276
+bear              : 0.614 | bed               : 0.401 | bench             : 0.180
+bicycle           : 0.161 | bird              : 0.268 | boat              : 0.194
+book              : 0.093 | bottle            : 0.277 | bowl              : 0.361
+broccoli          : 0.193 | bus               : 0.585 | cake              : 0.284
+car               : 0.346 | carrot            : 0.194 | cat               : 0.614
+cell phone        : 0.201 | chair             : 0.230 | clock             : 0.429
+couch             : 0.342 | cow               : 0.432 | cup               : 0.310
+dining table      : 0.231 | dog               : 0.537 | donut             : 0.393
+elephant          : 0.630 | fire hydrant      : 0.586 | fork              : 0.213
+frisbee           : 0.554 | giraffe           : 0.660 | hair drier        : 0.000
+handbag           : 0.026 | horse             : 0.493 | hot dog           : 0.332
+keyboard          : 0.459 | kite              : 0.333 | knife             : 0.091
+laptop            : 0.548 | microwave         : 0.469 | motorcycle        : 0.393
+mouse             : 0.503 | orange            : 0.245 | oven              : 0.320
+parking meter     : 0.419 | person            : 0.501 | pizza             : 0.459
+potted plant      : 0.202 | refrigerator      : 0.479 | remote            : 0.140
+sandwich          : 0.303 | scissors          : 0.223 | sheep             : 0.441
+sink              : 0.306 | skateboard        : 0.434 | skis              : 0.190
+snowboard         : 0.245 | spoon             : 0.083 | sports ball       : 0.306
+stop sign         : 0.593 | suitcase          : 0.317 | surfboard         : 0.286
+teddy bear        : 0.377 | tennis racket     : 0.383 | tie               : 0.183
+toaster           : 0.249 | toilet            : 0.597 | toothbrush        : 0.138
+traffic light     : 0.199 | train             : 0.604 | truck             : 0.239
+tv                : 0.508 | umbrella          : 0.339 | vase              : 0.306
+wine glass        : 0.239 | zebra             : 0.638
+
+PR curve saved to: results/ablations/adaptivision_full_pr_curve.png
+--- Overall Evaluation Complete ---
+
+Found complexity file: results/ablations/adaptivision_full_complexity.json
+Warning: Could not find complexity scores for 19 images present in ground truth.
+
+--- Running Complexity-Based Evaluation ---
+
+--- Evaluating Bin: Low Complexity (< 0.3) (203 images) ---
+Evaluating on 203 images...
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=0.04s).
+Accumulating evaluation results...
+DONE (t=0.06s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.502
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.606
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.569
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.200
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.530
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.800
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.501
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.523
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.523
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.202
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.560
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.832
+
+Per-Class AP @[ IoU=0.50:0.95 | area=   all | maxDets=100 ]:
+airplane          : 0.831 | apple             : -1.000 | backpack          : 0.000
+banana            : 0.365 | baseball bat      : -1.000 | baseball glove    : -1.000
+bear              : 0.679 | bed               : 0.900 | bench             : 0.738
+bicycle           : 0.505 | bird              : 0.298 | boat              : 0.000
+book              : -1.000 | bottle            : 0.000 | bowl              : 0.000
+broccoli          : -1.000 | bus               : -1.000 | cake              : 0.600
+car               : 0.183 | carrot            : -1.000 | cat               : 0.671
+cell phone        : -1.000 | chair             : 0.000 | clock             : 0.608
+couch             : -1.000 | cow               : 0.508 | cup               : -1.000
+dining table      : 0.000 | dog               : 0.900 | donut             : -1.000
+elephant          : 0.631 | fire hydrant      : 0.930 | fork              : -1.000
+frisbee           : 0.303 | giraffe           : 0.918 | hair drier        : -1.000
+handbag           : -1.000 | horse             : 0.578 | hot dog           : -1.000
+keyboard          : -1.000 | kite              : -1.000 | knife             : -1.000
+laptop            : -1.000 | microwave         : -1.000 | motorcycle        : 0.725
+mouse             : -1.000 | orange            : 0.202 | oven              : -1.000
+parking meter     : 0.690 | person            : 0.462 | pizza             : -1.000
+potted plant      : 0.000 | refrigerator      : -1.000 | remote            : -1.000
+sandwich          : -1.000 | scissors          : -1.000 | sheep             : 0.900
+sink              : 0.844 | skateboard        : -1.000 | skis              : 0.000
+snowboard         : 0.900 | spoon             : 0.000 | sports ball       : -1.000
+stop sign         : 0.810 | suitcase          : -1.000 | surfboard         : 0.312
+teddy bear        : 0.800 | tennis racket     : -1.000 | tie               : -1.000
+toaster           : -1.000 | toilet            : 0.963 | toothbrush        : -1.000
+traffic light     : 0.276 | train             : 0.950 | truck             : 0.077
+tv                : -1.000 | umbrella          : 0.800 | vase              : 0.337
+wine glass        : -1.000 | zebra             : 0.881
+--- Bin Evaluation Complete: Low Complexity (< 0.3) ---
+
+--- Evaluating Bin: Medium Complexity (0.3-0.7) (2158 images) ---
+Evaluating on 2158 images...
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=0.78s).
+Accumulating evaluation results...
+DONE (t=0.27s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.416
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.536
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.455
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.179
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.396
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.522
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.382
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.485
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.487
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.207
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.446
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.615
+
+Per-Class AP @[ IoU=0.50:0.95 | area=   all | maxDets=100 ]:
+airplane          : 0.756 | apple             : 0.080 | backpack          : 0.063
+banana            : 0.228 | baseball bat      : 0.289 | baseball glove    : 0.276
+bear              : 0.609 | bed               : 0.435 | bench             : 0.298
+bicycle           : 0.372 | bird              : 0.263 | boat              : 0.268
+book              : 0.080 | bottle            : 0.268 | bowl              : 0.276
+broccoli          : 0.254 | bus               : 0.664 | cake              : 0.426
+car               : 0.318 | carrot            : 0.147 | cat               : 0.676
+cell phone        : 0.309 | chair             : 0.219 | clock             : 0.568
+couch             : 0.395 | cow               : 0.406 | cup               : 0.307
+dining table      : 0.220 | dog               : 0.616 | donut             : 0.672
+elephant          : 0.675 | fire hydrant      : 0.549 | fork              : 0.484
+frisbee           : 0.626 | giraffe           : 0.687 | hair drier        : 0.000
+handbag           : 0.052 | horse             : 0.520 | hot dog           : 0.607
+keyboard          : 0.470 | kite              : 0.386 | knife             : 0.124
+laptop            : 0.604 | microwave         : 0.660 | motorcycle        : 0.608
+mouse             : 0.617 | orange            : 0.246 | oven              : 0.454
+parking meter     : 0.545 | person            : 0.564 | pizza             : 0.704
+potted plant      : 0.198 | refrigerator      : 0.696 | remote            : 0.304
+sandwich          : 0.489 | scissors          : 0.425 | sheep             : 0.429
+sink              : 0.375 | skateboard        : 0.463 | skis              : 0.252
+snowboard         : 0.257 | spoon             : 0.151 | sports ball       : 0.375
+stop sign         : 0.716 | suitcase          : 0.450 | surfboard         : 0.278
+teddy bear        : 0.493 | tennis racket     : 0.479 | tie               : 0.395
+toaster           : 0.000 | toilet            : 0.705 | toothbrush        : 0.196
+traffic light     : 0.269 | train             : 0.621 | truck             : 0.252
+tv                : 0.552 | umbrella          : 0.351 | vase              : 0.542
+wine glass        : 0.911 | zebra             : 0.679
+--- Bin Evaluation Complete: Medium Complexity (0.3-0.7) ---
+
+--- Evaluating Bin: High Complexity (> 0.7) (2620 images) ---
+Evaluating on 2620 images...
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=3.36s).
+Accumulating evaluation results...
+DONE (t=0.58s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.307
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.437
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.336
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.135
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.360
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.477
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.233
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.381
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.399
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.179
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.464
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.586
+
+Per-Class AP @[ IoU=0.50:0.95 | area=   all | maxDets=100 ]:
+airplane          : 0.428 | apple             : 0.151 | backpack          : 0.084
+banana            : 0.224 | baseball bat      : 0.191 | baseball glove    : 0.282
+bear              : 0.473 | bed               : 0.361 | bench             : 0.111
+bicycle           : 0.128 | bird              : 0.267 | boat              : 0.180
+book              : 0.094 | bottle            : 0.278 | bowl              : 0.370
+broccoli          : 0.189 | bus               : 0.568 | cake              : 0.272
+car               : 0.355 | carrot            : 0.198 | cat               : 0.526
+cell phone        : 0.175 | chair             : 0.232 | clock             : 0.287
+couch             : 0.335 | cow               : 0.463 | cup               : 0.312
+dining table      : 0.234 | dog               : 0.423 | donut             : 0.337
+elephant          : 0.585 | fire hydrant      : 0.560 | fork              : 0.192
+frisbee           : 0.536 | giraffe           : 0.527 | hair drier        : 0.000
+handbag           : 0.026 | horse             : 0.467 | hot dog           : 0.306
+keyboard          : 0.457 | kite              : 0.312 | knife             : 0.091
+laptop            : 0.537 | microwave         : 0.423 | motorcycle        : 0.356
+mouse             : 0.487 | orange            : 0.244 | oven              : 0.296
+parking meter     : 0.342 | person            : 0.488 | pizza             : 0.420
+potted plant      : 0.213 | refrigerator      : 0.426 | remote            : 0.127
+sandwich          : 0.261 | scissors          : 0.095 | sheep             : 0.461
+sink              : 0.244 | skateboard        : 0.414 | skis              : 0.165
+snowboard         : 0.223 | spoon             : 0.081 | sports ball       : 0.285
+stop sign         : 0.411 | suitcase          : 0.300 | surfboard         : 0.303
+teddy bear        : 0.306 | tennis racket     : 0.321 | tie               : 0.118
+toaster           : 0.318 | toilet            : 0.368 | toothbrush        : 0.124
+traffic light     : 0.176 | train             : 0.569 | truck             : 0.243
+tv                : 0.504 | umbrella          : 0.334 | vase              : 0.255
+wine glass        : 0.227 | zebra             : 0.521
+--- Bin Evaluation Complete: High Complexity (> 0.7) ---

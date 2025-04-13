@@ -10,6 +10,8 @@ import numpy as np
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import seaborn as sns
+import cv2
+from PIL import Image, UnidentifiedImageError
 
 # Add parent directory to path to import AdaptiVision modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -17,7 +19,21 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Import AdaptiVision modules
 from src.adaptivision import AdaptiVision
 
-def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
+# --- ADDITION: Add src directory to path for internal imports --- 
+src_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src')
+if src_dir not in sys.path:
+    sys.path.append(src_dir)
+# --- END ADDITION ---
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run AdaptiVision experiments")
+    parser.add_argument("--data", type=str, required=True, help="Directory containing input images")
+    parser.add_argument("--output", type=str, required=True, help="Directory to save results")
+    parser.add_argument("--weights", type=str, default="weights/model_n.pt", help="Path to model weights")
+    parser.add_argument("--device", type=str, default="auto", help="Device to run on (auto, cpu, cuda, mps)")
+    return parser.parse_args()
+
+def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt", device="auto", reanalyze_only=False):
     """
     Run comprehensive experiments comparing standard YOLO with AdaptiVision
     
@@ -25,6 +41,8 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
         data_dir: Directory containing input images
         output_dir: Directory to save results
         model_path: Path to YOLO model weights
+        device: Device to run inference on
+        reanalyze_only: Flag to reanalyze existing results
     """
     # Ensure output directories exist
     os.makedirs(output_dir, exist_ok=True)
@@ -33,6 +51,21 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
     os.makedirs(os.path.join(output_dir, "comparisons"), exist_ok=True)
     os.makedirs(os.path.join(output_dir, "visualizations"), exist_ok=True)
     os.makedirs(os.path.join(output_dir, "analytics"), exist_ok=True)
+    
+    # --- Check if re-analyzing existing results ---
+    detailed_results_path = os.path.join(output_dir, "detailed_results.json")
+    if reanalyze_only and os.path.exists(detailed_results_path):
+        print(f"Re-analyzing existing results from: {detailed_results_path}")
+        with open(detailed_results_path, "r") as f:
+            results = json.load(f)
+        # Skip directly to analytics
+        generate_analytics(results, output_dir)
+        print(f"Re-analysis complete. Analytics updated in {output_dir}")
+        return
+    elif reanalyze_only:
+        print(f"Error: Cannot re-analyze. Results file not found: {detailed_results_path}")
+        return
+    # --- End Re-analysis Check ---
     
     # Load metadata if available
     metadata_path = os.path.join(data_dir, "metadata.json")
@@ -46,16 +79,19 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
         image_files = [str(f) for f in image_files]
     
     print(f"Found {len(image_files)} images to process")
+    print(f"Using device: {device}")
     
     # Initialize detectors
     standard_detector = AdaptiVision(
         model_path=model_path,
+        device=device,
         enable_adaptive_confidence=False,
         context_aware=False
     )
     
     adaptive_detector = AdaptiVision(
         model_path=model_path, 
+        device=device,
         enable_adaptive_confidence=True,
         context_aware=True
     )
@@ -64,7 +100,40 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
     results = []
     
     # Process each image
-    for img_path in tqdm(image_files, desc="Processing images"):
+    total_images = len(image_files)
+    for i, img_path in enumerate(image_files):
+        # Print progress indicator
+        print(f"\n--- Processing image {i+1}/{total_images}: {os.path.basename(img_path)} ---")
+        
+        # Load image data once
+        try:
+            # Try loading with OpenCV first
+            original_image = cv2.imread(img_path)
+            if original_image is None:
+                # Try PIL fallback
+                pil_img = Image.open(img_path)
+                pil_img.load()
+                np_img = np.array(pil_img)
+                if len(np_img.shape) == 2: # Grayscale
+                    original_image = cv2.cvtColor(np_img, cv2.COLOR_GRAY2BGR)
+                elif np_img.shape[2] == 4: # RGBA
+                    original_image = cv2.cvtColor(np_img, cv2.COLOR_RGBA2BGR)
+                elif np_img.shape[2] == 3: # RGB
+                    original_image = cv2.cvtColor(np_img, cv2.COLOR_RGB2BGR)
+                else:
+                    raise ValueError(f"Unsupported channels: {np_img.shape[2]}")
+        except Exception as load_e:
+            print(f"Error loading image {img_path}: {load_e}. Skipping this image.")
+            # Add error entry to results and continue
+            results.append({
+                "filename": os.path.basename(img_path),
+                "image_path": img_path,
+                "standard_detection": {"success": False, "error": f"Image load error: {load_e}"},
+                "adaptive_detection": {"success": False, "error": f"Image load error: {load_e}"},
+                "comparison": {}, "visualization": {}
+            })
+            continue # Skip to the next image
+        
         img_filename = os.path.basename(img_path)
         img_stem = os.path.splitext(img_filename)[0]
         
@@ -88,7 +157,8 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
         # Run standard detection
         start_time = time.time()
         try:
-            standard_results = standard_detector.predict(img_path)
+            # Pass the loaded image array to predict
+            standard_results = standard_detector.predict(original_image)
             standard_time = time.time() - start_time
             
             # Get object counts
@@ -108,7 +178,7 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
                         standard_counts[name] = 1
                 
                 # Save detection image
-                standard_detector.visualize(img_path, standard_results[0], standard_img_path)
+                standard_detector.visualize(original_image, standard_results[0], standard_img_path)
                 
                 img_data["standard_detection"] = {
                     "success": True,
@@ -134,7 +204,8 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
         # Run adaptive detection
         start_time = time.time()
         try:
-            adaptive_results = adaptive_detector.predict(img_path)
+            # Pass the loaded image array to predict
+            adaptive_results = adaptive_detector.predict(original_image)
             adaptive_time = time.time() - start_time
             
             # Get object counts
@@ -158,7 +229,7 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
                         adaptive_counts[name] = 1
                 
                 # Save detection image
-                adaptive_detector.visualize(img_path, adaptive_results[0], adaptive_img_path)
+                adaptive_detector.visualize(original_image, adaptive_results[0], adaptive_img_path)
                 
                 img_data["adaptive_detection"] = {
                     "success": True,
@@ -173,15 +244,42 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
                 
                 # Create visualization of adaptive thresholding
                 try:
-                    from src.create_visualizations import create_complexity_visualization, create_threshold_map
+                    # Import the visualization functions
+                    from src.create_visualizations import create_complexity_visualization, create_threshold_map_visualization
                     
+                    # Get necessary data (make sure adaptive_results[0] exists)
+                    adaptive_result_data = adaptive_results[0]
+                    all_detections_for_vis = np.hstack((
+                        adaptive_result_data.get('boxes', np.array([])),
+                        adaptive_result_data.get('scores', np.array([])).reshape(-1, 1),
+                        adaptive_result_data.get('labels', np.array([])).reshape(-1, 1)
+                    )) if len(adaptive_result_data.get('boxes', [])) > 0 else np.array([])
+                    model_class_names = adaptive_detector.model.names if hasattr(adaptive_detector, 'model') else []
+                    base_threshold_val = adaptive_result_data.get('base_threshold', 0.25)
+
                     # Complexity visualization
                     complexity_path = os.path.join(visualization_dir, f"complexity_{img_filename}")
-                    create_complexity_visualization(img_path, complexity_path, scene_complexity)
+                    vis_complex_img = create_complexity_visualization(
+                        image=original_image.copy(), # Pass image array
+                        detections=all_detections_for_vis, 
+                        complexity=scene_complexity, 
+                        adaptive_threshold=adaptive_threshold,
+                        base_threshold=base_threshold_val,
+                        model_names=model_class_names
+                    )
+                    if vis_complex_img is not None:
+                        cv2.imwrite(complexity_path, vis_complex_img)
                     
-                    # Threshold map
+                    # Threshold map visualization
                     threshold_path = os.path.join(visualization_dir, f"threshold_map_{img_filename}")
-                    create_threshold_map(img_path, threshold_path, scene_complexity, 0.25, adaptive_threshold)
+                    vis_thresh_img = create_threshold_map_visualization(
+                        image=original_image.copy(), # Pass image array
+                        detections=all_detections_for_vis,
+                        base_threshold=base_threshold_val,
+                        adaptive_threshold=adaptive_threshold # Pass the final adaptive threshold
+                    )
+                    if vis_thresh_img is not None:
+                        cv2.imwrite(threshold_path, vis_thresh_img)
                     
                     # Save metadata
                     metadata_path = os.path.join(visualization_dir, f"metadata_{img_stem}.json")
@@ -226,16 +324,23 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt"):
                 standard_result = standard_results[0]
                 adaptive_result = adaptive_results[0]
                 
+                # Get base threshold used
+                base_threshold_used = adaptive_result.get('base_threshold', 0.25)
+                
+                # Convert BGR image (from cv2.imread or fallback) to RGB for the comparison function
+                original_image_rgb = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+                
                 # Create comparison image
-                create_comparison_image(
-                    img_path,
-                    standard_result,
-                    adaptive_result,
-                    comparison_path
+                comparison_vis_img = create_comparison_image(
+                    original_image_rgb,   # Pass RGB image array
+                    standard_result,      
+                    adaptive_result,      
+                    base_threshold_used,  
+                    comparison_path       
                 )
                 
                 # Add comparison info
-                base_threshold = 0.25
+                base_threshold = base_threshold_used # Use the actual base threshold for consistency
                 adaptive_threshold = float(adaptive_result.get("adaptive_threshold", base_threshold))
                 threshold_diff = adaptive_threshold - base_threshold
                 
@@ -388,36 +493,68 @@ def generate_analytics(results, output_dir):
         plt.savefig(os.path.join(analytics_dir, 'complexity_vs_threshold.png'), dpi=300)
         plt.close()
         
-        # 2. Object Count Comparison
-        plt.figure(figsize=(12, 6))
-        indices = range(len(filenames))
-        bar_width = 0.35
-        
-        plt.bar(indices, standard_objects, bar_width, alpha=0.7, label='Standard Detection')
-        plt.bar([i + bar_width for i in indices], adaptive_objects, bar_width, alpha=0.7, label='Adaptive Detection')
-        
-        plt.xlabel('Images')
-        plt.ylabel('Object Count')
-        plt.title('Standard vs. Adaptive Detection Object Count')
-        plt.xticks([i + bar_width/2 for i in indices], [f.split('.')[0] for f in filenames], rotation=90)
+        # --- NEW: Object Count Comparison (Scatter Plot) ---
+        plt.figure(figsize=(10, 8))
+        plt.scatter(standard_objects, adaptive_objects, alpha=0.5, s=10) # Smaller points for large dataset
+        max_val = max(max(standard_objects) if standard_objects else 0, max(adaptive_objects) if adaptive_objects else 0)
+        plt.plot([0, max_val], [0, max_val], color='red', linestyle='--', label='y=x (Equal Counts)')
+        plt.xlabel('Standard Detection Object Count')
+        plt.ylabel('Adaptive Detection Object Count')
+        plt.title('Object Count Comparison (Standard vs. Adaptive)')
+        plt.grid(True, alpha=0.3)
         plt.legend()
+        plt.axis('equal') # Ensure aspect ratio is equal
+        plt.xlim(left=0)
+        plt.ylim(bottom=0)
         plt.tight_layout()
-        plt.savefig(os.path.join(analytics_dir, 'object_count_comparison.png'), dpi=300)
+        plt.savefig(os.path.join(analytics_dir, 'object_count_scatter.png'), dpi=300)
+        plt.close()
+
+        # --- NEW: Object Count Difference Distribution ---
+        object_count_diff = np.array(adaptive_objects) - np.array(standard_objects)
+        plt.figure(figsize=(10, 6))
+        sns.histplot(object_count_diff, kde=True, bins=max(20, int(np.ptp(object_count_diff)) // 2) if len(object_count_diff)>0 else 10) # Auto-adjust bins somewhat
+        mean_diff = np.mean(object_count_diff) if len(object_count_diff) > 0 else 0
+        plt.axvline(x=mean_diff, color='r', linestyle='--', label=f'Mean Diff: {mean_diff:.2f}')
+        plt.xlabel('Object Count Difference (Adaptive - Standard)')
+        plt.ylabel('Frequency / Density')
+        plt.title('Distribution of Object Count Differences')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(os.path.join(analytics_dir, 'object_count_difference_distribution.png'), dpi=300)
         plt.close()
         
-        # 3. Processing Time Comparison
-        plt.figure(figsize=(12, 6))
-        
-        plt.bar(indices, standard_times, bar_width, alpha=0.7, label='Standard Detection')
-        plt.bar([i + bar_width for i in indices], adaptive_times, bar_width, alpha=0.7, label='Adaptive Detection')
-        
-        plt.xlabel('Images')
-        plt.ylabel('Processing Time (s)')
-        plt.title('Processing Time Comparison')
-        plt.xticks([i + bar_width/2 for i in indices], [f.split('.')[0] for f in filenames], rotation=90)
+        # --- NEW: Processing Time Comparison (Scatter Plot) ---
+        plt.figure(figsize=(10, 8))
+        plt.scatter(standard_times, adaptive_times, alpha=0.5, s=10)
+        max_time = max(max(standard_times) if standard_times else 0, max(adaptive_times) if adaptive_times else 0)
+        plt.plot([0, max_time], [0, max_time], color='red', linestyle='--', label='y=x (Equal Times)')
+        plt.xlabel('Standard Detection Time (s)')
+        plt.ylabel('Adaptive Detection Time (s)')
+        plt.title('Processing Time Comparison (Standard vs. Adaptive)')
+        plt.grid(True, alpha=0.3)
         plt.legend()
+        plt.axis('equal')
+        plt.xlim(left=0)
+        plt.ylim(bottom=0)
         plt.tight_layout()
-        plt.savefig(os.path.join(analytics_dir, 'processing_time_comparison.png'), dpi=300)
+        plt.savefig(os.path.join(analytics_dir, 'processing_time_scatter.png'), dpi=300)
+        plt.close()
+
+        # --- NEW: Processing Time Difference Distribution ---
+        time_diff = np.array(standard_times) - np.array(adaptive_times) # Standard - Adaptive
+        plt.figure(figsize=(10, 6))
+        sns.histplot(time_diff, kde=True, bins=30)
+        mean_time_diff = np.mean(time_diff) if len(time_diff) > 0 else 0
+        plt.axvline(x=mean_time_diff, color='r', linestyle='--', label=f'Mean Time Saved: {mean_time_diff:.4f}s')
+        plt.xlabel('Processing Time Difference (Standard - Adaptive) (s)')
+        plt.ylabel('Frequency / Density')
+        plt.title('Distribution of Processing Time Differences')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plt.savefig(os.path.join(analytics_dir, 'processing_time_difference_distribution.png'), dpi=300)
         plt.close()
         
         # 4. Speed Improvement Distribution
@@ -493,22 +630,19 @@ def generate_analytics(results, output_dir):
             f.write("![Complexity vs Threshold](analytics/complexity_vs_threshold.png)\n\n")
             
             f.write("### Object Detection Comparison\n\n")
-            f.write("![Object Count](analytics/object_count_comparison.png)\n\n")
+            f.write("This scatter plot compares the number of objects detected by the standard method (x-axis) versus the adaptive method (y-axis) for each image. Points on the red dashed line indicate both methods found the same number of objects.\n\n")
+            f.write("![Object Count Scatter](analytics/object_count_scatter.png)\n\n")
+            f.write("This histogram shows the distribution of the difference in object counts (Adaptive - Standard). Positive values indicate the adaptive method found more objects.\n\n")
+            f.write("![Object Count Difference Distribution](analytics/object_count_difference_distribution.png)\n\n")
             
             f.write("### Processing Time Comparison\n\n")
-            f.write("![Processing Time](analytics/processing_time_comparison.png)\n\n")
+            f.write("This scatter plot compares the processing time per image for the standard method (x-axis) versus the adaptive method (y-axis). Points on the red dashed line indicate equal processing time.\n\n")
+            f.write("![Processing Time Scatter](analytics/processing_time_scatter.png)\n\n")
+            f.write("This histogram shows the distribution of the difference in processing time (Standard - Adaptive). Positive values indicate the adaptive method was faster.\n\n")
+            f.write("![Processing Time Difference Distribution](analytics/processing_time_difference_distribution.png)\n\n")
             
             f.write("### Speed Improvement Distribution\n\n")
-            f.write("![Speed Improvement](analytics/speed_improvement_distribution.png)\n\n")
-            
-            f.write("### Threshold Change Distribution\n\n")
-            f.write("![Threshold Change](analytics/threshold_change_distribution.png)\n\n")
-            
-            f.write("### Scene Complexity Distribution\n\n")
-            f.write("![Complexity Distribution](analytics/complexity_distribution.png)\n\n")
-            
-            f.write("### Impact of Scene Complexity on Detection\n\n")
-            f.write("![Complexity vs Detection Difference](analytics/complexity_vs_detection_diff.png)\n\n")
+            f.write("This histogram shows the distribution of the speed improvement factor (Standard Time / Adaptive Time).\n\n")
             
         f.write("## Sample Comparisons\n\n")
         
@@ -534,13 +668,16 @@ def generate_analytics(results, output_dir):
     print(f"Analytics and report generated in {output_dir}")
 
 def main():
-    parser = argparse.ArgumentParser(description="Run comprehensive experiments")
-    parser.add_argument("--data", type=str, required=True, help="Directory with input images")
-    parser.add_argument("--output", type=str, required=True, help="Directory for output")
-    parser.add_argument("--weights", type=str, default="weights/model_n.pt", help="Path to model weights")
-    
-    args = parser.parse_args()
-    run_experiments(args.data, args.output, args.weights)
+    args = parse_args()
+    # Add a flag to trigger reanalysis if needed (can be set via another arg later if desired)
+    # For now, let's assume we always process if calling main directly without a specific reanalyze flag
+    run_experiments(
+        data_dir=args.data,
+        output_dir=args.output,
+        model_path=args.weights,
+        device=args.device,
+        reanalyze_only=False # Set to True manually or via arg if needed
+    )
 
 if __name__ == "__main__":
     main() 

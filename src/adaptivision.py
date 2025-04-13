@@ -10,6 +10,7 @@ import numpy as np
 import cv2
 from typing import Dict, List, Tuple, Union, Optional
 from pathlib import Path
+import sys
 
 try:
     from ultralytics import YOLO
@@ -33,7 +34,8 @@ class AdaptiVision:
         conf_threshold: float = 0.25,
         iou_threshold: float = 0.45,
         enable_adaptive_confidence: bool = True,
-        context_aware: bool = True
+        context_aware: bool = True,
+        enable_postprocess_filter: bool = True
     ):
         """
         Initialize AdaptiVision detector.
@@ -46,6 +48,7 @@ class AdaptiVision:
             iou_threshold: IoU threshold for NMS
             enable_adaptive_confidence: Whether to use adaptive confidence thresholding
             context_aware: Whether to use context-aware reasoning
+            enable_postprocess_filter: Whether to use geometric post-processing filter
         """
         self.model_path = model_path
         self.input_size = input_size
@@ -54,7 +57,7 @@ class AdaptiVision:
         if device == 'auto':
             if torch.cuda.is_available():
                 device = 'cuda'
-            elif hasattr(torch, 'has_mps') and torch.has_mps:
+            elif torch.backends.mps.is_available():
                 device = 'mps'  # For Apple Silicon
             else:
                 device = 'cpu'
@@ -64,6 +67,7 @@ class AdaptiVision:
         self.iou_threshold = iou_threshold
         self.enable_adaptive_confidence = enable_adaptive_confidence
         self.context_aware = context_aware
+        self.enable_postprocess_filter = enable_postprocess_filter
         
         # Knowledge base for object relationships
         self.object_relationships = {
@@ -198,18 +202,38 @@ class AdaptiVision:
             # Get original image for visualization
             original_img = cv2.imread(image_path)
             if original_img is None:
-                print(f"Error: Could not read image {image_path}")
-                # Try with PIL as a fallback
+                print(f"Warning: cv2.imread failed for {image_path}. Attempting PIL fallback.")
                 try:
-                    from PIL import Image
-                    pil_img = np.array(Image.open(image_path))
-                    if pil_img.shape[2] == 4:  # handle RGBA
-                        pil_img = pil_img[:, :, :3]
-                    # Convert from RGB to BGR for OpenCV compatibility
-                    original_img = pil_img[:, :, ::-1].copy()
-                    print(f"Successfully loaded image with PIL fallback, shape: {original_img.shape}")
-                except Exception as e:
-                    print(f"Failed to load with PIL fallback: {e}")
+                    # Dynamically import PIL and check for errors
+                    from PIL import Image, UnidentifiedImageError
+                    try:
+                        pil_img = Image.open(image_path)
+                        pil_img.load() # Load image data to catch errors early
+                        # Convert PIL Image to NumPy array
+                        np_img = np.array(pil_img)
+                        # Handle different image modes (Grayscale, RGB, RGBA)
+                        if len(np_img.shape) == 2: # Grayscale
+                            original_img = cv2.cvtColor(np_img, cv2.COLOR_GRAY2BGR)
+                        elif np_img.shape[2] == 4: # RGBA
+                            original_img = cv2.cvtColor(np_img, cv2.COLOR_RGBA2BGR)
+                        elif np_img.shape[2] == 3: # RGB
+                            original_img = cv2.cvtColor(np_img, cv2.COLOR_RGB2BGR)
+                        else:
+                            raise ValueError(f"Unsupported number of channels: {np_img.shape[2]}")
+                        print(f"Successfully loaded image '{os.path.basename(image_path)}' with PIL fallback.")
+                    except UnidentifiedImageError:
+                        print(f"Error: PIL cannot identify image file {image_path}. It might be corrupted or an unsupported format.")
+                        return [] # Stop processing this image
+                    except ImportError:
+                        # This specific import error won't happen if the outer try doesn't fail
+                        # But kept for robustness
+                        print("Error: Pillow is required for fallback image loading. Please install it: pip install Pillow")
+                        return []
+                    except Exception as pil_e:
+                        print(f"Error loading image {image_path} with PIL: {pil_e}")
+                        return []
+                except ImportError:
+                    print("Error: Pillow is not installed, and cv2.imread failed. Cannot load image.")
                     return []
         else:
             # Use provided image array
@@ -224,6 +248,7 @@ class AdaptiVision:
             conf=initial_conf,
             iou=iou_threshold,
             classes=classes,
+            device=self.device,
             verbose=False
         )
         
@@ -254,7 +279,8 @@ class AdaptiVision:
                     'class_names': [],
                     'image_path': image_path if isinstance(image_path, str) else 'array',
                     'image_shape': img_shape,
-                    'inference_time': time.time() - start_time
+                    'inference_time': time.time() - start_time,
+                    'base_threshold': conf_threshold
                 }
                 
                 all_results.append(detection_result)
@@ -299,15 +325,22 @@ class AdaptiVision:
                         final_names.append(name)
                 
                 # Apply post-processing validation to filter out likely false positives
-                filtered_boxes, filtered_scores, filtered_labels, filtered_names = self._post_process_detections(
-                    np.array(final_boxes) if final_boxes else np.array([]),
-                    np.array(final_scores) if final_scores else np.array([]),
-                    np.array(final_labels) if final_labels else np.array([]),
-                    final_names,
-                    img_shape
-                )
+                if self.enable_postprocess_filter:
+                    filtered_boxes, filtered_scores, filtered_labels, filtered_names = self._post_process_detections(
+                        np.array(final_boxes) if final_boxes else np.array([]),
+                        np.array(final_scores) if final_scores else np.array([]),
+                        np.array(final_labels) if final_labels else np.array([]),
+                        final_names,
+                        img_shape
+                    )
+                else:
+                    # If filter disabled, use the results directly after thresholding/context
+                    filtered_boxes = np.array(final_boxes) if final_boxes else np.array([])
+                    filtered_scores = np.array(final_scores) if final_scores else np.array([])
+                    filtered_labels = np.array(final_labels) if final_labels else np.array([])
+                    filtered_names = final_names
                 
-                # Create result dictionary
+                # Create base result dictionary
                 detection_result = {
                     'boxes': filtered_boxes,
                     'scores': filtered_scores,
@@ -316,11 +349,14 @@ class AdaptiVision:
                     'image_path': image_path if isinstance(image_path, str) else 'array',
                     'image_shape': img_shape,
                     'inference_time': time.time() - start_time,
-                    'scene_complexity': scene_complexity,
-                    'adaptive_threshold': adaptive_threshold,
-                    'enable_adaptive': self.enable_adaptive_confidence,
-                    'context_aware': self.context_aware
+                    'base_threshold': conf_threshold
                 }
+
+                # Add adaptive info if enabled
+                if self.enable_adaptive_confidence:
+                    detection_result['scene_complexity'] = scene_complexity
+                    detection_result['adaptive_threshold'] = adaptive_threshold
+            
             else:
                 # Filter by confidence without adaptive thresholding
                 mask = scores >= conf_threshold
@@ -329,7 +365,13 @@ class AdaptiVision:
                 filtered_labels = class_ids[mask]
                 filtered_names = [class_names[i] for i, m in enumerate(mask) if m]
                 
-                # Create result dictionary
+                # Apply post-processing validation to filter out likely false positives
+                if self.enable_postprocess_filter:
+                    filtered_boxes, filtered_scores, filtered_labels, filtered_names = self._post_process_detections(
+                        filtered_boxes, filtered_scores, filtered_labels, filtered_names, img_shape
+                    )
+                
+                # Create base result dictionary
                 detection_result = {
                     'boxes': filtered_boxes,
                     'scores': filtered_scores,
@@ -337,7 +379,8 @@ class AdaptiVision:
                     'class_names': filtered_names,
                     'image_path': image_path if isinstance(image_path, str) else 'array',
                     'image_shape': img_shape,
-                    'inference_time': time.time() - start_time
+                    'inference_time': time.time() - start_time,
+                    'base_threshold': conf_threshold
                 }
             
             all_results.append(detection_result)
@@ -519,18 +562,33 @@ class AdaptiVision:
             print(f"Loading image for visualization: {image_path}")
             image = cv2.imread(image_path)
             if image is None:
-                print(f"Error: Could not read image {image_path} for visualization")
-                # Try with PIL as a fallback
+                print(f"Warning: cv2.imread failed for visualization of {image_path}. Attempting PIL fallback.")
                 try:
-                    from PIL import Image
-                    pil_img = np.array(Image.open(image_path))
-                    if pil_img.shape[2] == 4:  # handle RGBA
-                        pil_img = pil_img[:, :, :3]
-                    # Convert from RGB to BGR for OpenCV compatibility
-                    image = pil_img[:, :, ::-1].copy()
-                    print(f"Successfully loaded image with PIL fallback, shape: {image.shape}")
-                except Exception as e:
-                    print(f"Failed to load with PIL fallback: {e}")
+                    from PIL import Image, UnidentifiedImageError
+                    try:
+                        pil_img = Image.open(image_path)
+                        pil_img.load()
+                        np_img = np.array(pil_img)
+                        if len(np_img.shape) == 2: # Grayscale
+                            image = cv2.cvtColor(np_img, cv2.COLOR_GRAY2BGR)
+                        elif np_img.shape[2] == 4: # RGBA
+                            image = cv2.cvtColor(np_img, cv2.COLOR_RGBA2BGR)
+                        elif np_img.shape[2] == 3: # RGB
+                            image = cv2.cvtColor(np_img, cv2.COLOR_RGB2BGR)
+                        else:
+                            raise ValueError(f"Unsupported number of channels: {np_img.shape[2]}")
+                        print(f"Successfully loaded visualization image '{os.path.basename(image_path)}' with PIL fallback.")
+                    except UnidentifiedImageError:
+                        print(f"Error: PIL cannot identify image file {image_path} for visualization.")
+                        return None # Return None as visualize should return the image array or None
+                    except ImportError:
+                        print("Error: Pillow is required for fallback image loading.")
+                        return None
+                    except Exception as pil_e:
+                        print(f"Error loading visualization image {image_path} with PIL: {pil_e}")
+                        return None
+                except ImportError:
+                    print("Error: Pillow is not installed, and cv2.imread failed. Cannot load visualization image.")
                     return None
         else:
             image = image_path.copy()
@@ -822,36 +880,40 @@ class AdaptiVision:
 import torch  # Required for device checks
 
 def main():
-    """Run a demo of AdaptiVision on a sample image."""
+    """Run AdaptiVision on a single image or a directory of images."""
     import argparse
-    
+
     # Parse arguments
     parser = argparse.ArgumentParser(description="AdaptiVision: Adaptive Context-Aware Object Detection")
-    parser.add_argument("--image", type=str, required=True, help="Path to input image")
+    parser.add_argument("--input_path", type=str, required=True, help="Path to input image or directory containing images")
     parser.add_argument("--weights", type=str, default="weights/model_n.pt", help="Path to model weights")
-    parser.add_argument("--output", type=str, default="output/detected.jpg", help="Path to output image")
+    parser.add_argument("--output_dir", type=str, default="results/output", help="Path to output directory")
     parser.add_argument("--conf", type=float, default=0.25, help="Confidence threshold")
     parser.add_argument("--iou", type=float, default=0.45, help="IoU threshold")
     parser.add_argument("--adaptive", action="store_true", help="Enable adaptive confidence thresholding")
     parser.add_argument("--context", action="store_true", help="Enable context-aware reasoning")
     parser.add_argument("--device", type=str, default="auto", help="Device to run inference on ('auto', 'cpu', 'cuda', 'mps')")
     parser.add_argument("--classes", type=int, nargs="+", help="Filter by class")
-    
+    parser.add_argument("--no-verbose", action="store_true", help="Suppress verbose output for each image")
+
     args = parser.parse_args()
-    
-    # Check if image exists
-    if not os.path.exists(args.image):
-        print(f"Error: Image {args.image} does not exist")
+
+    input_path = Path(args.input_path)
+    output_dir = Path(args.output_dir)
+
+    # Check if input path exists
+    if not input_path.exists():
+        print(f"Error: Input path {args.input_path} does not exist")
         return
-    
+
     # Check if model exists
     if not os.path.exists(args.weights):
         print(f"Error: Model {args.weights} does not exist")
         return
-    
+
     # Create output directory if it doesn't exist
-    os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
-    
+    output_dir.mkdir(parents=True, exist_ok=True)
+
     # Create detector
     detector = AdaptiVision(
         model_path=args.weights,
@@ -862,17 +924,54 @@ def main():
         context_aware=args.context
     )
     
-    # Run detection
-    results = detector.predict(
-        args.image,
-        verbose=True,
-        output_path=args.output,
-        classes=args.classes
-    )
+    # Find image files
+    image_files = []
+    if input_path.is_file():
+        image_files = [input_path]
+    elif input_path.is_dir():
+        print(f"Scanning directory: {input_path}")
+        image_extensions = ['.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff']
+        image_files = [f for f in input_path.iterdir() if f.suffix.lower() in image_extensions]
+        print(f"Found {len(image_files)} image files.")
+    else:
+        print(f"Error: Input path {args.input_path} is neither a file nor a directory.")
+        return
+        
+    if not image_files:
+        print(f"Error: No image files found in {args.input_path}")
+        return
+
+    # Process images
+    num_images = len(image_files)
+    print(f"Starting processing for {num_images} images...")
     
-    # Print summary if results
-    if results:
-        print(f"\nDetection results saved to {args.output}")
+    for i, image_file in enumerate(image_files):
+        # Print progress
+        progress_percent = (i + 1) / num_images * 100
+        sys.stdout.write(f"\rProcessing image {i+1}/{num_images} ({progress_percent:.1f}%) [{image_file.name}]...")
+        sys.stdout.flush()
+
+        output_filename = f"{image_file.stem}_detected{image_file.suffix}"
+        output_path = output_dir / output_filename
+        
+        try:
+            # Run detection
+            results = detector.predict(
+                str(image_file), # Predict expects string path or np array
+                verbose=(not args.no_verbose), # Control verbosity
+                output_path=str(output_path),
+                classes=args.classes
+            )
+            # Optional: Print summary if verbose and results exist
+            # if results and not args.no_verbose:
+            #    print(f"\nDetection results saved to {output_path}")
+        except Exception as e:
+             # Print error and continue with the next image
+             print(f"\nError processing {image_file.name}: {e}")
+             continue # Skip to next image
+
+    print(f"\nFinished processing. Results saved in {output_dir}")
+
 
 if __name__ == "__main__":
     main() 

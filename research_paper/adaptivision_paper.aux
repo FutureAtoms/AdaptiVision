@@ -1,0 +1,105 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{YOLOv3}
+\citation{YOLOv4}
+\citation{YOLOv6}
+\citation{YOLOv7}
+\citation{YOLOv8}
+\citation{COCO}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\citation{AdaptiveNMS}
+\citation{SoftNMS}
+\citation{Calibration}
+\citation{RelationNet}
+\citation{LeeLiDARAdapt}
+\citation{MaByteTrackAdapt}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
+\newlabel{sec:related}{{2}{2}{Related Work}{section.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Adaptive Non-Maximum Suppression (NMS):}{2}{section*.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Confidence Calibration:}{2}{section*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Context-Aware Object Detection:}{2}{section*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Adaptive Confidence Thresholding:}{2}{section*.4}\protected@file@percent }
+\citation{YOLOv8}
+\@writefile{toc}{\contentsline {paragraph}{Contribution of AdaptiVision:}{3}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Methodology}{3}{section.3}\protected@file@percent }
+\newlabel{sec:methodology}{{3}{3}{Methodology}{section.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Overview of the AdaptiVision processing pipeline. An input image is processed by a base detector (YOLOv8n) using a low initial threshold. Scene complexity is analyzed from these initial detections, which informs the calculation of a dynamic adaptive threshold. Optional class-specific and context adjustments further refine the threshold before final filtering and NMS produce the output detections.}}{3}{figure.caption.6}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:architecture}{{1}{3}{Overview of the AdaptiVision processing pipeline. An input image is processed by a base detector (YOLOv8n) using a low initial threshold. Scene complexity is analyzed from these initial detections, which informs the calculation of a dynamic adaptive threshold. Optional class-specific and context adjustments further refine the threshold before final filtering and NMS produce the output detections}{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Initial Low-Confidence Detection}{3}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Scene Complexity Calculation}{4}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Adaptive Threshold Calculation}{4}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Class-Specific Adjustments (Optional)}{4}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Context-Aware Reasoning (Optional)}{4}{subsection.3.5}\protected@file@percent }
+\citation{COCO}
+\citation{PyTorch}
+\citation{YOLOv8}
+\citation{OpenCV}
+\citation{NumPy}
+\citation{Matplotlib}
+\citation{Seaborn}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Final Filtering}{5}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experiments \& Results}{5}{section.4}\protected@file@percent }
+\newlabel{sec:experiments}{{4}{5}{Experiments \& Results}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Experimental Setup}{5}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Implementation Details}{5}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Quantitative Results (COCO val2017)}{5}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}Object Count and Processing Time Analysis}{5}{subsubsection.4.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces COCO val2017 Object Detection Accuracy Results (mAP/AR)}}{6}{table.caption.7}\protected@file@percent }
+\newlabel{tab:map_results}{{1}{6}{COCO val2017 Object Detection Accuracy Results (mAP/AR)}{table.caption.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Average Object Counts and Processing Time (COCO val2017)}}{6}{table.caption.8}\protected@file@percent }
+\newlabel{tab:count_time_results}{{2}{6}{Average Object Counts and Processing Time (COCO val2017)}{table.caption.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Qualitative Examples}{6}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{6}{section.5}\protected@file@percent }
+\newlabel{sec:discussion}{{5}{6}{Discussion}{section.5}{}}
+\newlabel{fig:count_diff_dist}{{2a}{7}{Object Count Difference (Adaptive - Standard)}{figure.caption.9}{}}
+\newlabel{sub@fig:count_diff_dist}{{a}{7}{Object Count Difference (Adaptive - Standard)}{figure.caption.9}{}}
+\newlabel{fig:time_diff_dist}{{2b}{7}{Processing Time Difference (Standard - Adaptive)}{figure.caption.9}{}}
+\newlabel{sub@fig:time_diff_dist}{{b}{7}{Processing Time Difference (Standard - Adaptive)}{figure.caption.9}{}}
+\newlabel{fig:speed_dist}{{2c}{7}{Speed Improvement Factor Distribution}{figure.caption.9}{}}
+\newlabel{sub@fig:speed_dist}{{c}{7}{Speed Improvement Factor Distribution}{figure.caption.9}{}}
+\newlabel{fig:complexity_dist}{{2d}{7}{Scene Complexity Score Distribution}{figure.caption.9}{}}
+\newlabel{sub@fig:complexity_dist}{{d}{7}{Scene Complexity Score Distribution}{figure.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Distributions of key metrics across the COCO val2017 dataset. (a) Difference in object counts per image. (b) Difference in processing time per image (positive means adaptive is faster). (c) Speed improvement factor (Standard Time / Adaptive Time). (d) Distribution of calculated scene complexity scores.}}{7}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:dist_plots}{{2}{7}{Distributions of key metrics across the COCO val2017 dataset. (a) Difference in object counts per image. (b) Difference in processing time per image (positive means adaptive is faster). (c) Speed improvement factor (Standard Time / Adaptive Time). (d) Distribution of calculated scene complexity scores}{figure.caption.9}{}}
+\newlabel{fig:count_scatter}{{3a}{7}{Object Count Scatter Plot}{figure.caption.10}{}}
+\newlabel{sub@fig:count_scatter}{{a}{7}{Object Count Scatter Plot}{figure.caption.10}{}}
+\newlabel{fig:time_scatter}{{3b}{7}{Processing Time Scatter Plot}{figure.caption.10}{}}
+\newlabel{sub@fig:time_scatter}{{b}{7}{Processing Time Scatter Plot}{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Scatter plots comparing per-image results on COCO val2017. (a) Number of objects detected (Standard vs. Adaptive). (b) Processing time in seconds (Standard vs. Adaptive). The red dashed line represents y=x.}}{7}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:scatter_plots}{{3}{7}{Scatter plots comparing per-image results on COCO val2017. (a) Number of objects detected (Standard vs. Adaptive). (b) Processing time in seconds (Standard vs. Adaptive). The red dashed line represents y=x}{figure.caption.10}{}}
+\newlabel{fig:qual_632}{{4a}{8}{Example 1 (Image ID: ...0632)}{figure.caption.11}{}}
+\newlabel{sub@fig:qual_632}{{a}{8}{Example 1 (Image ID: ...0632)}{figure.caption.11}{}}
+\newlabel{fig:qual_14038}{{4b}{8}{Example 2 (Image ID: ...14038)}{figure.caption.11}{}}
+\newlabel{sub@fig:qual_14038}{{b}{8}{Example 2 (Image ID: ...14038)}{figure.caption.11}{}}
+\newlabel{fig:qual_137727}{{4c}{8}{Example 3 (Image ID: ...137727)}{figure.caption.11}{}}
+\newlabel{sub@fig:qual_137727}{{c}{8}{Example 3 (Image ID: ...137727)}{figure.caption.11}{}}
+\newlabel{fig:qual_145020}{{4d}{8}{Example 4 (Image ID: ...145020)}{figure.caption.11}{}}
+\newlabel{sub@fig:qual_145020}{{d}{8}{Example 4 (Image ID: ...145020)}{figure.caption.11}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Qualitative comparison examples on COCO val2017 images. Left panel: Standard detection (0.25 threshold). Right panel: AdaptiVision detection. These examples illustrate how AdaptiVision's behavior varies with scene content.}}{8}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:qual_examples}{{4}{8}{Qualitative comparison examples on COCO val2017 images. Left panel: Standard detection (0.25 threshold). Right panel: AdaptiVision detection. These examples illustrate how AdaptiVision's behavior varies with scene content}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {paragraph}{Ablation Study Insights}{8}{section*.13}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Example scene complexity visualization (Image ID: ...14038). Shows initial low-confidence detections used to compute the scene complexity score (0.94) and the resulting adaptive threshold (0.15) compared to the base (0.25).}}{8}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:complexity_viz_example}{{5}{8}{Example scene complexity visualization (Image ID: ...14038). Shows initial low-confidence detections used to compute the scene complexity score (0.94) and the resulting adaptive threshold (0.15) compared to the base (0.25)}{figure.caption.12}{}}
+\bibcite{YOLOv3}{1}
+\bibcite{YOLOv4}{2}
+\bibcite{YOLOv8}{3}
+\bibcite{COCO}{4}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{9}{section.6}\protected@file@percent }
+\newlabel{sec:conclusion}{{6}{9}{Conclusion}{section.6}{}}
+\bibcite{AdaptiveNMS}{5}
+\bibcite{SoftNMS}{6}
+\bibcite{RelationNet}{7}
+\bibcite{LeeLiDARAdapt}{8}
+\bibcite{MaByteTrackAdapt}{9}
+\bibcite{Calibration}{10}
+\bibcite{YOLOv6}{11}
+\bibcite{YOLOv7}{12}
+\bibcite{NumPy}{13}
+\bibcite{OpenCV}{14}
+\bibcite{PyTorch}{15}
+\bibcite{Matplotlib}{16}
+\bibcite{Seaborn}{17}
+\gdef \@abspage@last{10}

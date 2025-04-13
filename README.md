@@ -47,6 +47,9 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -e .
+
+# IMPORTANT: Install Ultralytics manually (Version 8.3.107 confirmed working)
+pip install ultralytics==8.3.107
 ```
 
 ## Usage
@@ -92,9 +95,10 @@ comparison = detector.compare("path/to/image.jpg", "path/to/output/")
 - `scripts/`: Helper scripts
   - `run_experiments.py`: Run experiments on datasets
   - `analyze_results.py`: Generate analytics from results
-  - `reproduce_experiment.py`: Reproduce paper experiments
-- `datasets/`: Contains image datasets
-  - `coco128/`: COCO128 dataset subset
+- `examples/`: Example scripts and notebooks
+  - `basic_detection.py`: Simple detection example
+  - `batch_processing.py`: Process multiple images
+- `samples/`: Sample images for testing
 - `results/`: Generated results
   - `coco128_experiment/`: Results from COCO128 experiment
   - `full_coco128_experiment/`: Results from full COCO128 evaluation
@@ -102,10 +106,8 @@ comparison = detector.compare("path/to/image.jpg", "path/to/output/")
 
 ## Detailed Results
 
-- [COCO128 Experiment Results](results/coco128_experiment/README.md)
+- [Full COCO128 Experiment Results](results/full_coco128_experiment/experiment_report.md)
 - [Full Research Paper](results/research_paper/paper.md)
-- [Measurement Verification](results/coco128_experiment/measurement_verification.md)
-- [Full COCO128 Results](results/full_coco128_experiment/experiment_report.md)
 
 ## License
 
@@ -190,9 +192,7 @@ AdaptiVision/
 │   ├── create_visualizations.py # Generate visualizations of adaptive thresholds
 │   └── utils.py            # Utility functions
 ├── scripts/                # Utility scripts for experiments
-│   ├── prepare_subset.py   # Create dataset subset for experiments
-│   ├── run_experiments.py  # Run comprehensive experiments and analytics
-│   └── reproduce_experiment.py # Reproduce the COCO128 experiment
+│   └── run_experiments.py  # Run comprehensive experiments and analytics
 ├── examples/               # Example scripts and notebooks
 │   ├── basic_detection.py  # Simple detection example
 │   └── batch_processing.py # Process multiple images

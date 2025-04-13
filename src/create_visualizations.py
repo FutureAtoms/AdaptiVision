@@ -2,8 +2,15 @@
 """
 Generate visualizations for AdaptiVision's Adaptive Context-Aware thresholding
 """
-import argparse
+# --- ADDITION: Ensure project root is in path --- 
 import os
+import sys
+from pathlib import Path
+parent_dir = str(Path(__file__).resolve().parent.parent)
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
+# --- END ADDITION ---
+import argparse
 import time
 import numpy as np
 import cv2

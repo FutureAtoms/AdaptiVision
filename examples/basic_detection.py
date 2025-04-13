@@ -84,33 +84,48 @@ def main():
             avg_conf = sum(confs) / len(confs)
             print(f"  - {class_name}: {len(confs)} instances (avg conf: {avg_conf:.3f})")
             
-        # Print adaptive threshold if enabled
-        if not args.disable_adaptive and 'adaptive_threshold' in result:
+        # Print adaptive threshold if enabled AND available in results
+        if not args.disable_adaptive and 'adaptive_threshold' in result and 'scene_complexity' in result:
             adaptive_threshold = result['adaptive_threshold']
-            complexity = result['complexity']
-            adjustment = adaptive_threshold - args.conf_thres
+            complexity = result['scene_complexity']
+            # Use the base_threshold stored in the result for accurate comparison
+            base_threshold_used = result.get('base_threshold', args.conf_thres)
+            adjustment = adaptive_threshold - base_threshold_used
             print(f"\nScene complexity: {complexity:.3f}")
             print(f"Adaptive threshold: {adaptive_threshold:.3f} " +
                   f"({'decreased' if adjustment < 0 else 'increased'} by {abs(adjustment):.3f})")
+        elif not args.disable_adaptive:
+            print("\nAdaptive threshold info not available in results (perhaps no objects detected initially?).")
     else:
         print("No objects detected")
     
     # Save detection visualization
-    output_path = detector.visualize_detections(args.image, args.output)
-    print(f"\nResults saved to {output_path}")
+    vis_img = detector.visualize(
+        image_path=args.image, 
+        detections=results[0] if results else None,
+        output_path=args.output # Pass the output path argument
+    )
     
-    # Display image if not in headless environment
-    try:
-        img = cv2.imread(output_path)
-        window_name = "AdaptiVision Detection"
-        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-        cv2.imshow(window_name, img)
-        print("\nPress any key to exit")
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-    except:
-        # Skip visualization if running headless
-        pass
+    # Check if visualization was saved based on whether output path was given
+    visualization_saved = args.output is not None
+    
+    print(f"\nResults saved to {args.output if visualization_saved else '(Visualization not saved)'}")
+    
+    # Display image if not in headless environment and visualization was saved
+    if visualization_saved and vis_img is not None:
+        try:
+            # Use the returned image array directly if available
+            img_to_show = vis_img
+            window_name = "AdaptiVision Detection"
+            cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+            cv2.imshow(window_name, img_to_show)
+            print("\nPress any key to exit")
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+        except Exception as e:
+            print(f"Could not display image: {e}")
+            # Skip visualization if running headless or other display error
+            pass
 
 if __name__ == "__main__":
     main() 

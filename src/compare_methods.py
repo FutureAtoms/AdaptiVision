@@ -3,11 +3,15 @@
 Compare standard object detection with Adaptive Context-Aware thresholding
 """
 import os
+import sys
+from pathlib import Path
+parent_dir = str(Path(__file__).resolve().parent.parent)
+if parent_dir not in sys.path:
+    sys.path.append(parent_dir)
 import argparse
 import time
 import cv2
 import numpy as np
-from pathlib import Path
 
 from adaptivision import AdaptiVision
 
