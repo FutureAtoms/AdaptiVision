@@ -49,7 +49,7 @@ datasets/coco/
 
 # Results to Ignore
 results/video_output/
-results/coco_full_arxiv/
+# results/coco_full_arxiv/ # Removed to allow LFS tracking
 results/coco_val2017/
 
 # Logs
