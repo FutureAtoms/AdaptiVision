@@ -13,6 +13,11 @@ import seaborn as sns
 import cv2
 from PIL import Image, UnidentifiedImageError
 
+# --- ADDITION: Import Ultralytics components ---
+from ultralytics import YOLO
+from ultralytics.utils.checks import check_dataset
+from ultralytics.settings import Settings, SETTINGS
+
 # Add parent directory to path to import AdaptiVision modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -25,15 +30,67 @@ if src_dir not in sys.path:
     sys.path.append(src_dir)
 # --- END ADDITION ---
 
+# --- ADDITION: Function to check and download COCO ---
+def check_and_download_coco(data_dir, dataset_name="coco"):
+    """Checks if the specified dataset (e.g., COCO) exists locally and downloads it if not."""
+    is_coco = dataset_name.lower() == "coco"
+    
+    # Define expected paths for COCO val2017
+    expected_coco_dir = Path("./datasets/coco")
+    expected_img_dir = expected_coco_dir / "images" / "val2017"
+    expected_ann_file = expected_coco_dir / "annotations" / "instances_val2017.json"
+
+    # Only proceed if using COCO and the target directory looks like the expected COCO path
+    if not is_coco or not str(data_dir).startswith(str(expected_img_dir.parent.parent)):
+        print(f"Skipping automatic download check for non-COCO dataset or non-standard path: {data_dir}")
+        return
+
+    if expected_img_dir.exists() and expected_ann_file.exists():
+        print(f"Found existing {dataset_name} dataset at: {expected_coco_dir}")
+        return
+    else:
+        print(f"{dataset_name} dataset not found or incomplete at {expected_coco_dir}. Attempting download...")
+        
+        # Ensure the root datasets directory exists
+        expected_coco_dir.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Update Ultralytics settings to download to ./datasets
+        original_settings = SETTINGS.copy()
+        try:
+            print(f"Updating Ultralytics datasets_dir to: {expected_coco_dir.parent.resolve()}")
+            SETTINGS.update({'datasets_dir': str(expected_coco_dir.parent.resolve())})
+            
+            # Trigger download using check_dataset (more direct than dummy predict)
+            # This function downloads if the dataset is not found in the configured datasets_dir
+            print(f"Triggering download for {dataset_name}...")
+            data_info = check_dataset(dataset_name + ".yaml") # Use the YAML name recognized by ultralytics
+            
+            # Verify download location
+            if not expected_img_dir.exists() or not expected_ann_file.exists():
+                 print(f"Warning: Download finished, but expected files/dirs still not found in {expected_coco_dir}. Please check download location or manually place the dataset.")
+                 print(f"Ultralytics check_dataset returned: {data_info}")
+            else:
+                 print(f"Successfully downloaded and verified {dataset_name} dataset at {expected_coco_dir}")
+
+        except Exception as e:
+            print(f"Error during {dataset_name} download: {e}")
+            print(f"Please ensure you have internet connectivity and necessary permissions.")
+            print(f"You may need to download the COCO dataset manually and place it in {expected_coco_dir}")
+        finally:
+            # Restore original settings if needed (optional, depends on desired persistence)
+            SETTINGS.update(original_settings)
+            print(f"Restored original Ultralytics settings.")
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Run AdaptiVision experiments")
-    parser.add_argument("--data", type=str, required=True, help="Directory containing input images")
+    parser.add_argument("--data", type=str, required=True, help="Directory containing input images (e.g., ./datasets/coco/images/val2017)")
     parser.add_argument("--output", type=str, required=True, help="Directory to save results")
     parser.add_argument("--weights", type=str, default="weights/model_n.pt", help="Path to model weights")
     parser.add_argument("--device", type=str, default="auto", help="Device to run on (auto, cpu, cuda, mps)")
+    parser.add_argument("--dataset_name", type=str, default=None, help="Name of the dataset (e.g., 'coco') to enable automatic download check.")
     return parser.parse_args()
 
-def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt", device="auto", reanalyze_only=False):
+def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt", device="auto", reanalyze_only=False, dataset_name=None):
     """
     Run comprehensive experiments comparing standard YOLO with AdaptiVision
     
@@ -43,7 +100,13 @@ def run_experiments(data_dir, output_dir, model_path="weights/model_n.pt", devic
         model_path: Path to YOLO model weights
         device: Device to run inference on
         reanalyze_only: Flag to reanalyze existing results
+        dataset_name: Name of the dataset (e.g., 'coco') for download checks.
     """
+    # --- ADDITION: Check and download dataset if specified ---
+    if dataset_name:
+        check_and_download_coco(data_dir, dataset_name)
+    # --- END ADDITION ---
+    
     # Ensure output directories exist
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(os.path.join(output_dir, "standard"), exist_ok=True)
@@ -669,14 +732,13 @@ def generate_analytics(results, output_dir):
 
 def main():
     args = parse_args()
-    # Add a flag to trigger reanalysis if needed (can be set via another arg later if desired)
-    # For now, let's assume we always process if calling main directly without a specific reanalyze flag
+    # Pass dataset_name to run_experiments
     run_experiments(
-        data_dir=args.data,
-        output_dir=args.output,
-        model_path=args.weights,
+        data_dir=args.data, 
+        output_dir=args.output, 
+        model_path=args.weights, 
         device=args.device,
-        reanalyze_only=False # Set to True manually or via arg if needed
+        dataset_name=args.dataset_name # Pass the new argument
     )
 
 if __name__ == "__main__":

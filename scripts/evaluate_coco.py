@@ -6,6 +6,74 @@ from pycocotools.cocoeval import COCOeval
 import numpy as np # Added numpy import
 import matplotlib.pyplot as plt # Added plt import
 
+# --- ADDITION: Import Ultralytics components ---
+from pathlib import Path
+from ultralytics.utils.checks import check_dataset
+from ultralytics.settings import Settings, SETTINGS
+
+# --- ADDITION: Function to check and download COCO ---
+# (Identical to the one added in run_experiments.py)
+def check_and_download_coco(annotation_file, dataset_name="coco"):
+    """Checks if the specified dataset (e.g., COCO) exists locally and downloads it if not."""
+    is_coco = dataset_name.lower() == "coco"
+    
+    # Infer expected base directory from annotation file path
+    try:
+        ann_path = Path(annotation_file)
+        expected_coco_dir = ann_path.parent.parent # e.g., ./datasets/coco/annotations/.. /.. = ./datasets/coco
+        expected_img_dir = expected_coco_dir / "images" / "val2017"
+        expected_ann_file = expected_coco_dir / "annotations" / "instances_val2017.json"
+        
+        # Double check the inference makes sense
+        if not str(annotation_file).endswith("instances_val2017.json") or expected_coco_dir.name != 'coco':
+             print(f"Warning: Annotation file path '{annotation_file}' doesn't match expected COCO structure. Skipping download check.")
+             return
+             
+    except Exception as path_e:
+        print(f"Warning: Could not reliably determine expected COCO directory from '{annotation_file}': {path_e}. Skipping download check.")
+        return
+
+    # Only proceed if using COCO
+    if not is_coco:
+        print(f"Skipping automatic download check for non-COCO dataset: {dataset_name}")
+        return
+
+    if expected_img_dir.exists() and expected_ann_file.exists():
+        print(f"Found existing {dataset_name} dataset at: {expected_coco_dir}")
+        return
+    else:
+        print(f"{dataset_name} dataset not found or incomplete at {expected_coco_dir}. Attempting download...")
+        
+        # Ensure the root datasets directory exists
+        expected_coco_dir.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Update Ultralytics settings to download to ./datasets
+        original_settings = SETTINGS.copy()
+        try:
+            print(f"Updating Ultralytics datasets_dir to: {expected_coco_dir.parent.resolve()}")
+            SETTINGS.update({'datasets_dir': str(expected_coco_dir.parent.resolve())})
+            
+            # Trigger download using check_dataset
+            print(f"Triggering download for {dataset_name}...")
+            data_info = check_dataset(dataset_name + ".yaml") # Use the YAML name recognized by ultralytics
+            
+            # Verify download location
+            if not expected_img_dir.exists() or not expected_ann_file.exists():
+                 print(f"Warning: Download finished, but expected files/dirs still not found in {expected_coco_dir}. Please check download location or manually place the dataset.")
+                 print(f"Ultralytics check_dataset returned: {data_info}")
+            else:
+                 print(f"Successfully downloaded and verified {dataset_name} dataset at {expected_coco_dir}")
+
+        except Exception as e:
+            print(f"Error during {dataset_name} download: {e}")
+            print(f"Please ensure you have internet connectivity and necessary permissions.")
+            print(f"You may need to download the COCO dataset manually and place it in {expected_coco_dir}")
+        finally:
+            # Restore original settings
+            SETTINGS.update(original_settings)
+            print(f"Restored original Ultralytics settings.")
+
+
 def run_evaluation(coco_gt, coco_dt, iou_type, img_ids=None, results_file_path=None):
     """Runs COCO evaluation for a given set of image IDs."""
     coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
@@ -93,6 +161,19 @@ def run_evaluation(coco_gt, coco_dt, iou_type, img_ids=None, results_file_path=N
     return coco_eval.stats # Return the stats array
 
 def main(args):
+    # --- ADDITION: Check and download dataset ---
+    # Assuming dataset name is 'coco' if the default annotation file name is used
+    dataset_name = "coco" if "instances_val2017.json" in args.annotation_file else None
+    if dataset_name:
+         check_and_download_coco(args.annotation_file, dataset_name)
+    # --- END ADDITION ---
+    
+    # Ensure annotation file exists before proceeding
+    if not os.path.exists(args.annotation_file):
+         print(f"Error: Ground truth annotation file not found after check: {args.annotation_file}")
+         print("Please ensure the dataset was downloaded correctly or provide the correct path.")
+         return
+
     coco_gt = COCO(args.annotation_file)
 
     # Load results
@@ -175,7 +256,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate COCO format predictions using pycocotools, optionally with complexity breakdown.")
-    parser.add_argument('--annotation-file', type=str, required=True, help="Path to the COCO ground truth JSON file.")
+    parser.add_argument('--annotation-file', type=str, required=True, help="Path to the COCO ground truth JSON file (e.g., ./datasets/coco/annotations/instances_val2017.json).")
     parser.add_argument('--results-file', type=str, required=True, help="Path to the prediction results JSON file (e.g., *_preds.json).")
     parser.add_argument('--iou-type', type=str, default='bbox', choices=['bbox', 'segm', 'keypoints'], help="Type of evaluation.")
 

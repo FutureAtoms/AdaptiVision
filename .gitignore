@@ -51,6 +51,7 @@ datasets/coco/
 results/video_output/
 # results/coco_full_arxiv/ # Removed to allow LFS tracking
 results/coco_val2017/
+results/**/*.mp4
 
 # Logs
 *.log
