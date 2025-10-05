@@ -65,6 +65,7 @@ jobs:
         Invoke-WebRequest -Uri https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt -OutFile weights\model_n.pt
 
     - name: Verify weights downloaded
+      shell: bash
       run: |
         python -c "import os; assert os.path.exists('weights/model_n.pt'), 'Weights not found'; print(f'Weights size: {os.path.getsize(\"weights/model_n.pt\")} bytes')"
 
