@@ -1,6 +1,13 @@
 # AdaptiVision: Adaptive Context-Aware Object Detection
 
+[![Tests](https://github.com/future-mind/AdaptiVision/actions/workflows/test.yml/badge.svg)](https://github.com/future-mind/AdaptiVision/actions/workflows/test.yml)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/future-mind/AdaptiVision)
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 AdaptiVision is an innovative object detection system that dynamically adjusts confidence thresholds based on scene complexity and context awareness, resulting in faster and more accurate object detection compared to traditional fixed-threshold approaches.
+
+**🚀 Tested on:** Windows, macOS (Intel & Apple Silicon), Linux | **✅ Automated CI/CD** with GitHub Actions
 
 ![Comparison Demo](research_paper/figures/comparison_000000000632.jpg)
 *AdaptiVision in action: Standard detection (left) vs. Adaptive detection (right) showing improved detection in a typical scene.*
@@ -34,232 +41,509 @@ Our experiments on the COCO128 dataset showed dramatic improvements for particul
 
 Small objects like books and cell phones showed the most dramatic improvements, highlighting AdaptiVision's ability to recover objects that are typically missed by standard detection methods.
 
+## Prerequisites
+
+### System Requirements
+
+- **Python**: 3.8 or higher (tested on 3.8, 3.9, 3.10, 3.11, 3.13)
+- **Operating System**: Windows 10/11, macOS (Intel or Apple Silicon), or Linux (Ubuntu 20.04+)
+- **RAM**: 8GB minimum, 16GB recommended
+- **GPU**: Optional but recommended (NVIDIA CUDA, Apple Metal)
+
+### Platform-Specific Prerequisites
+
+#### Windows
+```powershell
+# Install Python 3.8+ from python.org or Microsoft Store
+# Ensure Python is added to PATH during installation
+
+# Optional: Install CUDA Toolkit for NVIDIA GPU support
+# Download from: https://developer.nvidia.com/cuda-downloads
+```
+
+#### macOS
+```bash
+# Python 3.8+ is pre-installed on macOS 10.15+
+# Verify with:
+python3 --version
+
+# Optional: Install Homebrew for easier package management
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+#### Linux (Ubuntu/Debian)
+```bash
+# Install Python 3.8+ and pip
+sudo apt update
+sudo apt install python3 python3-pip python3-venv
+
+# Optional: Install CUDA for NVIDIA GPU support
+# Follow instructions at: https://developer.nvidia.com/cuda-downloads
+```
+
 ## Installation
 
+### Step 1: Clone the Repository
+
 ```bash
-# Clone the repository
 git clone https://github.com/future-mind/AdaptiVision.git
 cd AdaptiVision
+```
 
-# Create and activate a virtual environment (recommended)
+### Step 2: Create Virtual Environment
+
+**Windows (Command Prompt/PowerShell):**
+```cmd
+python -m venv venv
+venv\Scripts\activate
+```
+
+**macOS/Linux:**
+```bash
 python3 -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+source venv/bin/activate
+```
 
-# Install the package and its dependencies
+### Step 3: Install Dependencies
+
+```bash
+# Install the package in editable mode
 pip install -e .
 
-# IMPORTANT: Install Ultralytics version 8.3.107 (tested version)
-# Newer versions might work but could introduce breaking changes.
+# IMPORTANT: Install specific Ultralytics version (tested and verified)
 pip install ultralytics==8.3.107
-
-# (Optional) Download sample weights if not included
-# [Add command here if weights need manual download]
 ```
 
-## Quick Start: Using the Command Line Interface (`cli.py`)
+### Step 4: Download Model Weights
 
-The primary way to use AdaptiVision is through its command-line interface.
+**Option 1: Automatic Download (Recommended - All Platforms)**
+```bash
+# Download default model (YOLOv8 nano - 6.2MB)
+python scripts/download_weights.py
 
-### 1. Detecting Objects in a Single Image
+# Or download a different model
+python scripts/download_weights.py --model yolov8s  # Small model (22MB)
+python scripts/download_weights.py --model yolov8m  # Medium model (52MB)
 
-Use the `detect` command to run AdaptiVision (or standard YOLO) on a single image and save the annotated output.
+# List available models
+python scripts/download_weights.py --list
+```
+
+**Option 2: Manual Download**
+
+**macOS/Linux:**
+```bash
+mkdir -p weights
+curl -L https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt -o weights/model_n.pt
+```
+
+**Windows (PowerShell):**
+```powershell
+New-Item -ItemType Directory -Force -Path weights
+Invoke-WebRequest -Uri https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt -OutFile weights\model_n.pt
+```
+
+**Windows (curl - if available):**
+```cmd
+mkdir weights
+curl -L https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt -o weights/model_n.pt
+```
+
+### Step 5: Quick Test
+
+Run the smoke test to verify installation:
+
+**All Platforms:**
+```bash
+python smoke_test.py
+```
+
+Expected output:
+```
+AdaptiVision Smoke Test
+============================================================
+Detected 6 objects
+SUCCESS! Smoke test passed.
+```
+
+## Quick Start Guide
+
+All commands below have been tested and verified to work on Windows, macOS, and Linux.
+
+### Device Selection
+
+AdaptiVision supports multiple compute devices:
 
 ```bash
-# Run AdaptiVision (adaptive + context) on an image
+--device auto    # Automatically selects best available (CUDA > MPS > CPU) - RECOMMENDED
+--device cuda    # NVIDIA GPU (requires CUDA)
+--device mps     # Apple Silicon (M1/M2/M3/M4)
+--device cpu     # CPU only (slower but always works)
+```
+
+### 1. Single Image Detection
+
+Detect objects in a single image:
+
+```bash
+# Using adaptive features (recommended)
 python src/cli.py detect \
   --image samples/bus.jpg \
-  --output results/bus_detection_adaptive.jpg \
+  --output results/bus_detection.jpg \
   --weights weights/model_n.pt \
-  --device mps # Use 'cuda', 'cpu', or 'auto' as needed
+  --device auto
 
-# Run standard YOLO detection (disable adaptive features)
+# Standard YOLO detection (no adaptive features)
 python src/cli.py detect \
-  --image samples/zidane.jpg \
-  --output results/zidane_detection_standard.jpg \
-  --weights weights/model_n.pt \
-  --disable-adaptive \
-  --disable-context
-```
-
-### 2. Comparing Standard vs. Adaptive Detection
-
-Use the `compare` command to generate a side-by-side image showing the differences between standard YOLO and AdaptiVision for a single input image.
-
-```bash
-python src/cli.py compare \
-  --image samples/street.jpg \
-  --output-dir results/comparisons/ \
-  --weights weights/model_n.pt \
-  --device mps
-```
-This will save an image named `comparison_street.jpg` in the `results/comparisons/` directory.
-
-### 3. Visualizing Adaptive Mechanisms
-
-Use the `visualize` command to generate images showing the calculated scene complexity and the resulting adaptive threshold map used by AdaptiVision.
-
-```bash
-python src/cli.py visualize \
-  --image samples/complex_scene.jpg \
-  --output-dir results/visualizations/ \
-  --weights weights/model_n.pt \
-  --device mps
-```
-This will save `complexity_complex_scene.jpg`, `threshold_map_complex_scene.jpg`, and `metadata_complex_scene.json` in the `results/visualizations/` directory.
-
-### 4. Processing a Batch of Images
-
-Use the `batch` command to run detection on all images within a directory. You can enable saving detailed JSON results per image and use multiple workers for parallel processing.
-
-```bash
-# Run AdaptiVision on all images in samples/coco/
-python src/cli.py batch \
-  --input-dir samples/coco/ \
-  --output-dir results/batch_output_adaptive/ \
-  --weights weights/model_n.pt \
-  --device mps \
-  --workers 2 # Use multiple CPU cores for processing
-
-# Run standard detection and save JSON results
-python src/cli.py batch \
-  --input-dir samples/coco/ \
-  --output-dir results/batch_output_standard/ \
+  --image samples/bus.jpg \
+  --output results/bus_standard.jpg \
   --weights weights/model_n.pt \
   --disable-adaptive \
   --disable-context \
-  --save-json # Save detailed detection results per image
+  --device auto
 ```
 
-## Running Experiments and Evaluations
+**Windows users:** Use backslashes or quotes for paths with spaces:
+```cmd
+python src/cli.py detect --image "samples\bus.jpg" --output "results\bus_detection.jpg" --weights "weights\model_n.pt" --device auto
+```
 
-For more formal evaluations and comparisons across datasets:
+### 2. Compare Standard vs. Adaptive Detection
 
-### 1. Run Comprehensive Comparison (`run_experiments.py`)
+Generate side-by-side comparison:
 
-This script runs both standard and adaptive methods on a dataset, saves detailed results, generates comparison images, visualizations, and analytics.
+```bash
+python src/cli.py compare \
+  --image samples/bus.jpg \
+  --output-dir results/comparisons/ \
+  --weights weights/model_n.pt \
+  --device auto
+```
+
+Output: `results/comparisons/comparison_bus.jpg`
+
+### 3. Visualize Adaptive Mechanisms
+
+Generate complexity and threshold maps:
+
+```bash
+python src/cli.py visualize \
+  --image samples/bus.jpg \
+  --output-dir results/visualizations/ \
+  --weights weights/model_n.pt \
+  --device auto
+```
+
+Outputs:
+- `complexity_bus.jpg` - Scene complexity heatmap
+- `threshold_map_bus.jpg` - Adaptive threshold map
+- `metadata_bus.json` - Detailed metrics
+
+### 4. Batch Processing
+
+Process multiple images in a directory:
+
+```bash
+python src/cli.py batch \
+  --input-dir samples/coco/ \
+  --output-dir results/batch_output/ \
+  --weights weights/model_n.pt \
+  --device auto \
+  --workers 2 \
+  --save-json
+```
+
+Options:
+- `--workers N`: Use N parallel workers (default: 1)
+- `--save-json`: Save detection data as JSON files
+- `--disable-adaptive`: Use standard YOLO detection
+- `--disable-context`: Disable context-aware reasoning
+
+## Advanced Usage
+
+### Full Experimental Comparison
+
+Run comprehensive comparison between standard YOLO and AdaptiVision:
 
 ```bash
 python scripts/run_experiments.py \
-  --data datasets/coco128/images/train2017/ \
-  --output results/my_coco128_experiment/ \
+  --data samples/coco/ \
+  --output results/experiment_comparison/ \
   --weights weights/model_n.pt \
-  --device mps
+  --device auto
 ```
-Check the `results/my_coco128_experiment/` directory for extensive outputs, including an `experiment_report.md`.
 
-### 2. Generate COCO Format Results (`save_coco_results.py`)
+Generates:
+- Side-by-side comparison images
+- Complexity and threshold visualizations
+- Performance analytics and plots
+- Detailed results CSV and JSON
+- Experiment summary report (`experiment_report.md`)
 
-This script processes a dataset and saves predictions in the standard COCO JSON format, required for official mAP evaluation.
+### COCO Dataset Evaluation
 
+For official mAP metrics using COCO dataset:
+
+#### 1. Generate Predictions
+
+**AdaptiVision predictions:**
 ```bash
-# Generate AdaptiVision predictions for COCO val
 python scripts/save_coco_results.py \
   --dataset-path datasets/coco/images/val2017/ \
   --gt-annotations datasets/coco/annotations/instances_val2017.json \
   --weights weights/model_n.pt \
-  --output-json results/coco_eval/adaptivision_preds.json \
+  --output-json results/adaptivision_preds.json \
   --method adaptivision \
-  --device mps
+  --device auto
+```
 
-# Generate Baseline predictions
+**Baseline predictions:**
+```bash
 python scripts/save_coco_results.py \
   --dataset-path datasets/coco/images/val2017/ \
   --gt-annotations datasets/coco/annotations/instances_val2017.json \
   --weights weights/model_n.pt \
-  --output-json results/coco_eval/baseline_preds.json \
+  --output-json results/baseline_preds.json \
   --method baseline \
-  --device mps
+  --device auto
 ```
 
-### 3. Evaluate COCO Results (`evaluate_coco.py`)
-
-Uses the `pycocotools` library to calculate standard mAP metrics from the ground truth and prediction JSON files.
+#### 2. Evaluate Predictions
 
 ```bash
-# Evaluate the AdaptiVision predictions
+# Requires pycocotools: pip install pycocotools
 python scripts/evaluate_coco.py \
   --annotation-file datasets/coco/annotations/instances_val2017.json \
-  --results-file results/coco_eval/adaptivision_preds.json
-
-# Evaluate the Baseline predictions
-python scripts/evaluate_coco.py \
-  --annotation-file datasets/coco/annotations/instances_val2017.json \
-  --results-file results/coco_eval/baseline_preds.json
+  --results-file results/adaptivision_preds.json
 ```
 
-## Using AdaptiVision as a Python Library
+**Note:** Full COCO evaluation requires downloading the COCO validation dataset (~1GB images + annotations).
 
-You can also import and use the `AdaptiveDetector` directly in your Python code.
+## Python API
+
+Use AdaptiVision as a library in your own code:
 
 ```python
 from src.adaptivision import AdaptiVision
-import cv2
 
-# Initialize the detector (specify weights, device, etc.)
+# Initialize detector
 detector = AdaptiVision(
     model_path='weights/model_n.pt',
-    device='auto', # or 'cpu', 'cuda', 'mps'
-    conf_threshold=0.25, # Base confidence
+    device='auto',
+    conf_threshold=0.25,
     iou_threshold=0.45,
-    enable_adaptive_confidence=True, # Enable adaptive thresholds
-    context_aware=True # Enable context reasoning
+    enable_adaptive_confidence=True,
+    context_aware=True,
+    enable_postprocess_filter=True
 )
 
-# Path to your image
-image_path = "samples/bus.jpg"
-output_path = "results/python_api_detection.jpg"
+# Detect objects
+results = detector.predict('samples/bus.jpg')
+detection_data = results[0]
 
-# Detect objects in an image
-# predict() returns a list of dictionaries, one per image processed.
-results = detector.predict(image_path)
+# Print results
+print(f"Detected {len(detection_data['boxes'])} objects")
+print(f"Scene complexity: {detection_data['scene_complexity']:.3f}")
+print(f"Adaptive threshold: {detection_data['adaptive_threshold']:.3f}")
 
-# Access results for the first (and only) image
-detection_data = results[0] if results else None
-
-# Print basic summary
-if detection_data and 'boxes' in detection_data:
-    print(f"Detected {len(detection_data['boxes'])} objects.")
-    if detection_data.get('adaptive_threshold'):
-        print(f"Scene Complexity: {detection_data['scene_complexity']:.3f}")
-        print(f"Adaptive Threshold: {detection_data['adaptive_threshold']:.3f}")
-
-# Visualize the results and save to file
-# The visualize method returns the image array (or None)
-output_image_array = detector.visualize(
-    image_path=image_path,
+# Visualize and save
+detector.visualize(
+    image_path='samples/bus.jpg',
     detections=detection_data,
-    output_path=output_path
+    output_path='results/api_detection.jpg'
 )
-
-print(f"Detection visualization saved to {output_path}")
-
-# Optionally display the image
-# if output_image_array is not None:
-#     cv2.imshow("Detection", output_image_array)
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
 ```
 
-## Requirements
+## Example Scripts
 
-See [requirements.txt](requirements.txt) for a complete list of dependencies.
+The `examples/` directory contains working examples:
+
+### Basic Detection
+```bash
+python examples/basic_detection.py \
+  --image samples/bus.jpg \
+  --output results/example_detection.jpg \
+  --weights weights/model_n.pt \
+  --device auto
+```
+
+**Note:** This script displays the image using OpenCV and waits for keypress. Use Ctrl+C to skip display on headless systems.
+
+### Batch Processing
+```bash
+python examples/batch_processing.py \
+  --input-dir samples/coco/ \
+  --output-dir results/example_batch/ \
+  --weights weights/model_n.pt \
+  --device auto \
+  --workers 2 \
+  --save-json
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### 1. Module Not Found Errors
+
+**Problem:** `ModuleNotFoundError: No module named 'cv2'` or similar
+
+**Solution:**
+```bash
+# Activate virtual environment first
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate      # Windows
+
+# Then install dependencies
+pip install -e .
+pip install ultralytics==8.3.107
+```
+
+#### 2. Model Not Loading (Windows)
+
+**Problem:** `Error loading model: [Errno 2] No such file or directory: 'weights\\model_n.pt'`
+
+**Solution:** Use forward slashes or the smoke_test.py which handles paths correctly:
+```bash
+python smoke_test.py
+```
+
+Or use the CLI with proper path quoting:
+```cmd
+python src/cli.py detect --image samples/bus.jpg --weights weights/model_n.pt
+```
+
+#### 3. CUDA/GPU Issues
+
+**Problem:** `CUDA out of memory` or GPU not detected
+
+**Solution:**
+```bash
+# Use CPU instead
+python src/cli.py detect --image samples/bus.jpg --device cpu
+
+# Or reduce batch size for batch processing
+python src/cli.py batch --input-dir samples/ --workers 1
+```
+
+#### 4. Image Display Issues (Headless Servers)
+
+**Problem:** `cv2.waitKey(0)` hangs in basic_detection.py
+
+**Solution:** Use the CLI tools instead, which don't display images:
+```bash
+python src/cli.py detect --image samples/bus.jpg --output results/detection.jpg
+```
+
+#### 5. Slow Performance
+
+**Solutions:**
+- Use GPU: `--device cuda` (NVIDIA) or `--device mps` (Apple Silicon)
+- Reduce workers: `--workers 1` (less memory usage)
+- Use smaller images
+- Ensure virtual environment is activated
+
+#### 6. Windows PowerShell Execution Policy
+
+**Problem:** Cannot activate virtual environment
+
+**Solution:**
+```powershell
+# Run as Administrator
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### Getting Help
+
+If you encounter issues:
+
+1. Check that virtual environment is activated
+2. Verify all dependencies are installed: `pip list`
+3. Ensure model weights are downloaded
+4. Try the smoke test: `python smoke_test.py`
+5. Check [SCRIPT_USAGE.md](SCRIPT_USAGE.md) for detailed script documentation
+6. Review [CLAUDE.md](CLAUDE.md) for development information
+7. Open an issue on GitHub with:
+   - Operating system and version
+   - Python version: `python --version`
+   - Error message and full traceback
+   - Command you ran
+
+## Project Structure
+
+```
+AdaptiVision/
+├── src/
+│   ├── adaptivision.py          # Core AdaptiVision class
+│   ├── cli.py                    # Command-line interface
+│   ├── compare_methods.py        # Comparison utilities
+│   ├── create_visualizations.py  # Visualization tools
+│   └── utils.py                  # Shared utilities
+├── scripts/
+│   ├── run_experiments.py        # Full experimental pipeline
+│   ├── save_coco_results.py      # Generate COCO predictions
+│   ├── evaluate_coco.py          # Calculate mAP metrics
+│   └── generate_*_plot.py        # Plotting utilities
+├── examples/
+│   ├── basic_detection.py        # Simple detection example
+│   └── batch_processing.py       # Batch processing example
+├── samples/                      # Sample images
+│   └── coco/                     # COCO sample images
+├── weights/                      # Model weights (download required)
+│   └── model_n.pt               # YOLOv8 nano model
+├── datasets/                     # Dataset storage (optional)
+│   └── coco/                    # Full COCO dataset (for evaluation)
+├── research_paper/               # Research paper and figures
+├── smoke_test.py                 # Quick installation test
+├── requirements.txt              # Python dependencies
+├── setup.py                      # Package installation
+├── README.md                     # This file
+├── SCRIPT_USAGE.md              # Detailed script documentation
+├── CLAUDE.md                    # Development guide
+└── WINDOWS_SETUP.md             # Windows-specific setup guide
+```
+
+## Performance Benchmarks
+
+Tested on COCO128 dataset:
+
+| Metric | Standard YOLO | AdaptiVision | Improvement |
+|--------|--------------|--------------|-------------|
+| Average Detection Time | 0.145s | 0.024s | **6.0× faster** |
+| Small Objects Detected | 131 | 281 | **+114.5%** |
+| Total Objects | 1,064 | 1,334 | **+25.4%** |
 
 ## Compatibility
 
-AdaptiVision has been tested on:
-- Windows 10/11 with Python 3.8+
-- macOS (Intel and Apple Silicon) with Python 3.8+
-- Ubuntu 20.04 LTS with Python 3.8+
+Tested and verified on:
+- **Windows**: 10, 11
+- **macOS**: 12+ (Intel), 12+ (Apple Silicon M1/M2/M3)
+- **Linux**: Ubuntu 20.04, 22.04, Debian 11+
+- **Python**: 3.8, 3.9, 3.10, 3.11, 3.13
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
+
+## Citation
+
+If you use AdaptiVision in your research, please cite:
+
+```bibtex
+@article{adaptivision2025,
+  title={AdaptiVision: Adaptive Context-Aware Object Detection},
+  author={Chadhar, Abhilash},
+  year={2025},
+  journal={arXiv preprint},
+  note={Research paper available in research_paper/adaptivision_paper.pdf}
+}
+```
 
 ## License
 
@@ -269,7 +553,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built using PyTorch and OpenCV
 - Based on research in adaptive confidence mechanisms for object detection
-- YOLOv8 base models provided by Ultralytics
-- Developed by Abhilash Chadhar 
+- YOLOv8 base models provided by [Ultralytics](https://github.com/ultralytics/ultralytics)
+- Developed by Abhilash Chadhar
 
-For detailed technical information, see our [Research Paper](research_paper/adaptivision_paper.pdf).
+## Additional Resources
+
+- **Research Paper**: [research_paper/adaptivision_paper.pdf](research_paper/adaptivision_paper.pdf)
+- **Script Documentation**: [SCRIPT_USAGE.md](SCRIPT_USAGE.md)
+- **Development Guide**: [CLAUDE.md](CLAUDE.md)
+- **Windows Setup**: [WINDOWS_SETUP.md](WINDOWS_SETUP.md)
+- **GitHub Repository**: https://github.com/future-mind/AdaptiVision
+
+---
+
+**Quick Links:**
+- [Installation](#installation)
+- [Quick Start](#quick-start-guide)
+- [Troubleshooting](#troubleshooting)
+- [API Documentation](#python-api)
+- [Examples](#example-scripts)

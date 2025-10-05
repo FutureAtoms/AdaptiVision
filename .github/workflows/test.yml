@@ -1,0 +1,126 @@
+name: Cross-Platform Tests
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test on ${{ matrix.os }} - Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        exclude:
+          # macOS doesn't support Python 3.8 on latest runners
+          - os: macos-latest
+            python-version: '3.8'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/pip
+          ~/Library/Caches/pip
+          ~\AppData\Local\pip\Cache
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt', 'setup.py') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Cache model weights
+      id: cache-weights
+      uses: actions/cache@v4
+      with:
+        path: weights/model_n.pt
+        key: yolov8n-weights-v1
+        restore-keys: |
+          yolov8n-weights-
+
+    - name: Download model weights (Unix)
+      if: runner.os != 'Windows' && steps.cache-weights.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p weights
+        curl -L https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt -o weights/model_n.pt
+
+    - name: Download model weights (Windows)
+      if: runner.os == 'Windows' && steps.cache-weights.outputs.cache-hit != 'true'
+      shell: powershell
+      run: |
+        New-Item -ItemType Directory -Force -Path weights
+        Invoke-WebRequest -Uri https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt -OutFile weights\model_n.pt
+
+    - name: Verify weights downloaded
+      run: |
+        python -c "import os; assert os.path.exists('weights/model_n.pt'), 'Weights not found'; print(f'Weights size: {os.path.getsize(\"weights/model_n.pt\")} bytes')"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install ultralytics==8.3.107
+
+    - name: Install pytest for testing
+      run: |
+        pip install pytest pytest-cov
+
+    - name: Run smoke test
+      run: |
+        python smoke_test.py
+
+    - name: Test CLI detect command
+      run: |
+        python src/cli.py detect --image samples/bus.jpg --output results/test_detect.jpg --weights weights/model_n.pt --device cpu
+
+    - name: Test CLI compare command
+      run: |
+        python src/cli.py compare --image samples/bus.jpg --output-dir results/test_compare/ --weights weights/model_n.pt --device cpu
+
+    - name: Test CLI visualize command
+      run: |
+        python src/cli.py visualize --image samples/bus.jpg --output-dir results/test_visualize/ --weights weights/model_n.pt --device cpu
+
+    - name: Test CLI batch command
+      run: |
+        python src/cli.py batch --input-dir samples/coco/ --output-dir results/test_batch/ --weights weights/model_n.pt --device cpu --workers 1 --save-json
+
+    - name: Test batch processing example
+      run: |
+        python examples/batch_processing.py --input-dir samples/coco/ --output-dir results/example_batch/ --weights weights/model_n.pt --device cpu --workers 1 --save-json
+
+    - name: Verify outputs created
+      run: |
+        python -c "import os; assert os.path.exists('results/test_detect.jpg'), 'Detect output not found'; print('All outputs verified')"
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: |
+          results/
+          !results/**/*.json
+        retention-days: 7
+
+    - name: Run experiments script (smoke test only)
+      run: |
+        python scripts/run_experiments.py --data samples/coco/ --output results/test_experiment/ --weights weights/model_n.pt --device cpu
+      continue-on-error: true
+
+    - name: Display platform info
+      run: |
+        python -c "import platform; import torch; print(f'OS: {platform.system()} {platform.release()}'); print(f'Python: {platform.python_version()}'); print(f'PyTorch: {torch.__version__}'); print(f'CUDA available: {torch.cuda.is_available()}'); print(f'Device count: {torch.cuda.device_count() if torch.cuda.is_available() else 0}')"

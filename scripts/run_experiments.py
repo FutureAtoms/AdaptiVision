@@ -15,8 +15,12 @@ from PIL import Image, UnidentifiedImageError
 
 # --- ADDITION: Import Ultralytics components ---
 from ultralytics import YOLO
-from ultralytics.utils.checks import check_dataset
-from ultralytics.settings import Settings, SETTINGS
+# NOTE: check_dataset import removed - not available in all ultralytics versions
+# from ultralytics.utils.checks import check_dataset
+try:
+    from ultralytics.settings import Settings, SETTINGS
+except ImportError:
+    SETTINGS = None
 
 # Add parent directory to path to import AdaptiVision modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -60,17 +64,13 @@ def check_and_download_coco(data_dir, dataset_name="coco"):
             print(f"Updating Ultralytics datasets_dir to: {expected_coco_dir.parent.resolve()}")
             SETTINGS.update({'datasets_dir': str(expected_coco_dir.parent.resolve())})
             
-            # Trigger download using check_dataset (more direct than dummy predict)
-            # This function downloads if the dataset is not found in the configured datasets_dir
-            print(f"Triggering download for {dataset_name}...")
-            data_info = check_dataset(dataset_name + ".yaml") # Use the YAML name recognized by ultralytics
-            
-            # Verify download location
-            if not expected_img_dir.exists() or not expected_ann_file.exists():
-                 print(f"Warning: Download finished, but expected files/dirs still not found in {expected_coco_dir}. Please check download location or manually place the dataset.")
-                 print(f"Ultralytics check_dataset returned: {data_info}")
-            else:
-                 print(f"Successfully downloaded and verified {dataset_name} dataset at {expected_coco_dir}")
+            # NOTE: check_dataset functionality disabled (not available in all ultralytics versions)
+            # User must download COCO dataset manually
+            print(f"Automatic download not available.")
+            print(f"Please download the {dataset_name} dataset manually and place it in {expected_coco_dir}")
+            print(f"Required structure:")
+            print(f"  {expected_coco_dir}/images/val2017/")
+            print(f"  {expected_coco_dir}/annotations/instances_val2017.json")
 
         except Exception as e:
             print(f"Error during {dataset_name} download: {e}")

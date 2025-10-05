@@ -1,0 +1,13 @@
+name: Platform Support Badge
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  update-badge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Platform Badge
+        run: echo "Platform support workflow placeholder"
