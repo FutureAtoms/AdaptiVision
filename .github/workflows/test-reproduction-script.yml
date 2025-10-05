@@ -1,0 +1,236 @@
+name: Test Paper Reproduction Scripts
+
+on:
+  push:
+    branches: [ main, dev ]
+    paths:
+      - 'reproduce_paper_windows.*'
+      - 'scripts/run_experiments.py'
+      - '.github/workflows/test-reproduction-script.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'reproduce_paper_windows.*'
+  workflow_dispatch:
+
+jobs:
+  test-windows-batch:
+    name: Test Windows Batch Script
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~\AppData\Local\pip\Cache
+        key: ${{ runner.os }}-pip-reproduction-${{ hashFiles('requirements.txt', 'setup.py') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-reproduction-
+
+    - name: Cache model weights
+      id: cache-weights
+      uses: actions/cache@v4
+      with:
+        path: weights/model_n.pt
+        key: yolov8n-weights-v1
+
+    - name: Create sample dataset (small subset for testing)
+      shell: bash
+      run: |
+        mkdir -p datasets/coco128/images/train2017
+        # Copy a few sample images for quick test
+        cp samples/bus.jpg datasets/coco128/images/train2017/
+        cp samples/dog.jpg datasets/coco128/images/train2017/
+        cp samples/zidane.jpg datasets/coco128/images/train2017/
+        echo "Created test dataset with 3 images"
+
+    - name: Test Windows Batch Script (dry run)
+      shell: cmd
+      run: |
+        echo Testing Windows batch script components...
+
+        REM Test Python detection
+        python --version
+
+        REM Create venv
+        python -m venv venv
+        call venv\Scripts\activate.bat
+
+        REM Install dependencies
+        python -m pip install --upgrade pip --quiet
+        pip install -e . --quiet
+        pip install ultralytics==8.3.107 --quiet
+
+        REM Download weights if not cached
+        if not exist weights\model_n.pt (
+          python scripts\download_weights.py
+        )
+
+        REM Run smoke test
+        python smoke_test.py
+
+        REM Run mini experiment (3 images)
+        python scripts\run_experiments.py --data datasets\coco128\images\train2017 --output results\test_reproduction --weights weights\model_n.pt --device cpu
+
+        REM Verify outputs
+        if not exist results\test_reproduction\experiment_report.md (
+          echo ERROR: Experiment report not generated
+          exit /b 1
+        )
+
+        echo SUCCESS: Windows batch script components work!
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-batch-test-results
+        path: |
+          results/test_reproduction/
+        retention-days: 7
+
+  test-windows-powershell:
+    name: Test Windows PowerShell Script
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~\AppData\Local\pip\Cache
+        key: ${{ runner.os }}-pip-reproduction-ps-${{ hashFiles('requirements.txt', 'setup.py') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-reproduction-ps-
+
+    - name: Cache model weights
+      id: cache-weights
+      uses: actions/cache@v4
+      with:
+        path: weights/model_n.pt
+        key: yolov8n-weights-v1
+
+    - name: Create sample dataset (small subset for testing)
+      shell: bash
+      run: |
+        mkdir -p datasets/coco128/images/train2017
+        # Copy a few sample images for quick test
+        cp samples/bus.jpg datasets/coco128/images/train2017/
+        cp samples/dog.jpg datasets/coco128/images/train2017/
+        cp samples/zidane.jpg datasets/coco128/images/train2017/
+        echo "Created test dataset with 3 images"
+
+    - name: Test PowerShell Script Components
+      shell: powershell
+      run: |
+        Write-Host "Testing PowerShell script components..." -ForegroundColor Cyan
+
+        # Test Python detection
+        python --version
+
+        # Create venv
+        python -m venv venv
+        & "venv\Scripts\Activate.ps1"
+
+        # Install dependencies
+        python -m pip install --upgrade pip --quiet
+        pip install -e . --quiet
+        pip install ultralytics==8.3.107 --quiet
+
+        # Download weights if not cached
+        if (-not (Test-Path "weights\model_n.pt")) {
+          python scripts\download_weights.py
+        }
+
+        # Run smoke test
+        python smoke_test.py
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "ERROR: Smoke test failed" -ForegroundColor Red
+          exit 1
+        }
+
+        # Run mini experiment (3 images)
+        python scripts\run_experiments.py --data datasets\coco128\images\train2017 --output results\test_reproduction_ps --weights weights\model_n.pt --device cpu
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "ERROR: Experiments failed" -ForegroundColor Red
+          exit 1
+        }
+
+        # Verify outputs
+        if (-not (Test-Path "results\test_reproduction_ps\experiment_report.md")) {
+          Write-Host "ERROR: Experiment report not generated" -ForegroundColor Red
+          exit 1
+        }
+
+        Write-Host "SUCCESS: PowerShell script components work!" -ForegroundColor Green
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-powershell-test-results
+        path: |
+          results/test_reproduction_ps/
+        retention-days: 7
+
+  verify-outputs:
+    name: Verify Reproduction Outputs
+    runs-on: windows-latest
+    needs: [test-windows-batch, test-windows-powershell]
+
+    steps:
+    - name: Download batch test results
+      uses: actions/download-artifact@v4
+      with:
+        name: windows-batch-test-results
+        path: batch_results/
+
+    - name: Download PowerShell test results
+      uses: actions/download-artifact@v4
+      with:
+        name: windows-powershell-test-results
+        path: ps_results/
+
+    - name: Verify required files exist
+      shell: powershell
+      run: |
+        Write-Host "Verifying reproduction script outputs..." -ForegroundColor Cyan
+
+        $requiredFiles = @(
+          "batch_results\experiment_report.md",
+          "batch_results\summary_results.csv",
+          "ps_results\experiment_report.md",
+          "ps_results\summary_results.csv"
+        )
+
+        $allExist = $true
+        foreach ($file in $requiredFiles) {
+          if (Test-Path $file) {
+            Write-Host "✓ Found: $file" -ForegroundColor Green
+          } else {
+            Write-Host "✗ Missing: $file" -ForegroundColor Red
+            $allExist = $false
+          }
+        }
+
+        if (-not $allExist) {
+          Write-Host "ERROR: Some required outputs are missing" -ForegroundColor Red
+          exit 1
+        }
+
+        Write-Host "`nSUCCESS: All reproduction outputs verified!" -ForegroundColor Green
