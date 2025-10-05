@@ -233,4 +233,5 @@ jobs:
           exit 1
         }
 
-        Write-Host "`nSUCCESS: All reproduction outputs verified!" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "SUCCESS: All reproduction outputs verified!" -ForegroundColor Green
