@@ -287,14 +287,14 @@ pause
 
 REM Create output directory with timestamp
 for /f "tokens=2-4 delims=/ " %%a in ('date /t') do (set mydate=%%c%%a%%b)
-for /f "tokens=1-2 delims=/:" %%a in ('time /t') do (set mytime=%%a%%b)
+for /f "tokens=1-2 delims=/: " %%a in ('time /t') do (set mytime=%%a%%b)
 set EXPDIR=results\paper_reproduction_%mydate%_%mytime%
 
 echo Output directory: %EXPDIR%
 echo.
 
-REM Run experiments
-python scripts\run_experiments.py --data datasets\coco128\images\train2017 --output %EXPDIR% --weights weights\model_n.pt --device cpu
+REM Run experiments (use quotes to handle spaces and special chars)
+python scripts\run_experiments.py --data datasets\coco128\images\train2017 --output "%EXPDIR%" --weights weights\model_n.pt --device cpu
 
 if errorlevel 1 (
     echo.
