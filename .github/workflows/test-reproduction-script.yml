@@ -207,31 +207,31 @@ jobs:
         path: ps_results/
 
     - name: Verify required files exist
-      shell: powershell
+      shell: bash
       run: |
-        Write-Host "Verifying reproduction script outputs..." -ForegroundColor Cyan
+        echo "Verifying reproduction script outputs..."
 
-        $requiredFiles = @(
-          'batch_results/experiment_report.md',
-          'batch_results/summary_results.csv',
-          'ps_results/experiment_report.md',
-          'ps_results/summary_results.csv'
+        required_files=(
+          "batch_results/experiment_report.md"
+          "batch_results/summary_results.csv"
+          "ps_results/experiment_report.md"
+          "ps_results/summary_results.csv"
         )
 
-        $allExist = $true
-        foreach ($file in $requiredFiles) {
-          if (Test-Path $file) {
-            Write-Host "✓ Found: $file" -ForegroundColor Green
-          } else {
-            Write-Host "✗ Missing: $file" -ForegroundColor Red
-            $allExist = $false
-          }
-        }
+        all_exist=true
+        for file in "${required_files[@]}"; do
+          if [ -f "$file" ]; then
+            echo "✓ Found: $file"
+          else
+            echo "✗ Missing: $file"
+            all_exist=false
+          fi
+        done
 
-        if (-not $allExist) {
-          Write-Host "ERROR: Some required outputs are missing" -ForegroundColor Red
+        if [ "$all_exist" = false ]; then
+          echo "ERROR: Some required outputs are missing"
           exit 1
-        }
+        fi
 
-        Write-Host ""
-        Write-Host "SUCCESS: All reproduction outputs verified!" -ForegroundColor Green
+        echo ""
+        echo "SUCCESS: All reproduction outputs verified!"
